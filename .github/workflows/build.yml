@@ -5,4 +5,4 @@ jobs:
     uses: Nuclear-Squid/Quacken/.github/workflows/build-user-config.yml@zmk_firmware
     with:
       build_matrix_path: firmware/zmk-keyboard-quacken/build.yml
-      config_path: firmware/zmk/config
+      config_path: firmware/zmk-keyboard-quacken/config
