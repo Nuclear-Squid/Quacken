@@ -71,11 +71,12 @@ jobs:
             export zmk_load_arg=" -DZMK_EXTRA_MODULES='${GITHUB_WORKSPACE}'"
             new_tmp_dir="${TMPDIR:-/tmp}/zmk-config"
             mkdir -p "${new_tmp_dir}"
-            echo "base_dir=${new_tmp_dir}" >> $GITHUB_ENV
+            base_dir="${new_tmp_dir}"
           else
-            echo "base_dir=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+            base_dir="${GITHUB_WORKSPACE}"
           fi
 
+          echo "base_dir=${base_dir}" >> $GITHUB_ENV
           echo "final_config_path=${base_dir}/$(dirname ${{ inputs.config_path }})" >> $GITHUB_ENV
 
           if [ -n "${snippet}" ]; then
