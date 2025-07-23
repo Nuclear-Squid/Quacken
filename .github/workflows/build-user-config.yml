@@ -117,7 +117,7 @@ jobs:
 
       - name: West Update
         working-directory: ${{ env.base_dir }}
-        run: sudo apt install tree && pwd && tree && echo "$(dirname ${{ inputs.config_path }})" && west update
+        run: cd "$(dirname ${{ inputs.config_path }})" && west update
 
       - name: West Zephyr export
         working-directory: ${{ env.base_dir }}
