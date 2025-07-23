@@ -121,7 +121,7 @@ jobs:
 
       - name: West Zephyr export
         working-directory: ${{ env.base_dir }}
-        run: west zephyr-export
+        run: cd "$(dirname ${{ inputs.config_path }})" && west zephyr-export
 
       - name: West Build (${{ env.display_name }})
         working-directory: ${{ env.base_dir }}
