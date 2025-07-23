@@ -76,7 +76,7 @@ jobs:
             echo "base_dir=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
           fi
 
-          echo "final_config_path=${base_dir}/$(dirname {{ inputs.config_path }})" >> $GITHUB_ENV
+          echo "final_config_path=${base_dir}/$(dirname ${{ inputs.config_path }})" >> $GITHUB_ENV
 
           if [ -n "${snippet}" ]; then
             extra_west_args="-S \"${snippet}\""
