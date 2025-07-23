@@ -76,6 +76,8 @@ jobs:
             echo "base_dir=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
           fi
 
+          echo "final_config_path=$base_dir/$(dirname {{ inputs.config_path }}" >> $GITHUB_ENV
+
           if [ -n "${snippet}" ]; then
             extra_west_args="-S \"${snippet}\""
           fi
@@ -116,15 +118,15 @@ jobs:
         run: west init -l "${{ env.base_dir }}/${{ inputs.config_path }}"
 
       - name: West Update
-        working-directory: ${{ env.base_dir }}
-        run: cd "$(dirname ${{ inputs.config_path }})" && west update
+        working-directory: ${{ env.final_config_path }}
+        run: west update
 
       - name: West Zephyr export
-        working-directory: ${{ env.base_dir }}
-        run: cd "$(dirname ${{ inputs.config_path }})" && west zephyr-export
+        working-directory: ${{ env.final_config_path }}
+        run: west zephyr-export
 
       - name: West Build (${{ env.display_name }})
-        working-directory: ${{ env.base_dir }}
+        working-directory: ${{ env.final_config_path }}
         shell: sh -x {0}
         run: west build -s zmk/app -d "${{ env.build_dir }}" -b "${{ matrix.board }}" ${{ env.extra_west_args }} -- -DZMK_CONFIG=${{ env.base_dir }}/${{ inputs.config_path }} ${{ env.extra_cmake_args }} ${{ matrix.cmake-args }}
 
