@@ -1,0 +1,8 @@
+file_format: "1"
+id: quacken
+name: Quacken
+type: shield
+url: https://github.com/Nuclear-Squid/Quacken
+requires: [pro_micro]
+features:
+  - keys

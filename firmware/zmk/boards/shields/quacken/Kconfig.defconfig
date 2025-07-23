@@ -1,0 +1,7 @@
+if SHIELD_MY_BOARD
+
+# Name must be less than 16 characters long!
+config SHIELD_QUACKEN
+    default "Quacken"
+
+endif

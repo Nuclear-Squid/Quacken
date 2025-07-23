@@ -1,5 +1,5 @@
 {
-  description = "Development flake for scpino1k board";
+  description = "Development flake for Quacken development";
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
   outputs = { self, nixpkgs }:
