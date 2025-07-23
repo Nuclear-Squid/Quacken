@@ -117,7 +117,7 @@ jobs:
 
       - name: West Update
         working-directory: ${{ env.base_dir }}
-        run: pwd && west update
+        run: pwd && tree && west update
 
       - name: West Zephyr export
         working-directory: ${{ env.base_dir }}
