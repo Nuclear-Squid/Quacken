@@ -17,19 +17,23 @@ mod app {
     // use embedded_time::duration::Extensions;
     // use embedded_time::rate::Extensions as RateExtensions;
     use panic_probe as _;
-    use rp2040_hal;
     use rp2040_hal::{
+        self,
+
         // clocks::{init_clocks_and_plls, Clock},
         // gpio::{bank0::*, dynpin::DynPin},
         // pac::{I2C0, PIO0},
         // pio::{PIOExt, SM0, SM1},
 
+        fugit::MicrosDurationU32,
+
         clocks::init_clocks_and_plls,
         gpio::dynpin::DynPin,
+        // gpio::Pins,
         pio::PIOExt,
 
         sio::Sio,
-        timer::{Alarm0, Timer},
+        timer::{ Alarm, Alarm0, Timer },
         usb::UsbBus,
         watchdog::Watchdog,
     };
@@ -44,16 +48,21 @@ mod app {
     use keyberon::layout::{CustomEvent, Event, Layout};
     // use keyberon::keyboard::Leds;
 
-    use rp2040_hal::usb;
-    use usb_device::bus::UsbBusAllocator;
-    use usb_device::class::UsbClass as _;
-    use usb_device::device::UsbDeviceState;
+    use usb_device::{
+        prelude::UsbDeviceState,
+        class_prelude::UsbBusAllocator,
 
-    type UsbClass = keyberon::Class<'static, usb::UsbBusType, ()>;
-    type UsbDevice = usb_device::device::UsbDevice<'static, usb::UsbBusType>;
+        // HACK: Import UsbClass trait, but still allow to use it’s name for
+        // a type later
+        class::UsbClass as _,
+    };
+
+    type UsbClass = keyberon::Class<'static, UsbBus, ()>;
+    type UsbDevice = usb_device::device::UsbDevice<'static, UsbBus>;
 
     const SCAN_TIME_US: u32 = 1000;
     const EXTERNAL_XTAL_FREQ_HZ: u32 = 12_000_000u32;
+
     static mut USB_BUS: Option<UsbBusAllocator<UsbBus>> = None;
 
     #[shared]
@@ -89,7 +98,6 @@ mod app {
             &mut resets,
             &mut watchdog,
         )
-        .ok()
         .unwrap();
 
         let sio = Sio::new(c.device.SIO);
@@ -100,10 +108,9 @@ mod app {
             &mut resets,
         );
 
-        let mut timer = Timer::new(c.device.TIMER, &mut resets);
+        let mut timer = Timer::new(c.device.TIMER, &mut resets, &clocks);
         let mut alarm = timer.alarm_0().unwrap();
-        // let _ = alarm.schedule(SCAN_TIME_US.microseconds());
-        let _ = alarm.schedule(SCAN_TIME_US);
+        alarm.schedule(MicrosDurationU32::micros(SCAN_TIME_US));
         alarm.enable_interrupt();
 
         let (mut pio, sm0, sm1, _, _) = c.device.PIO0.split(&mut resets);
@@ -120,14 +127,18 @@ mod app {
             USB_BUS = Some(usb_bus);
         }
 
-        // let usb_class = keyberon::new_class(unsafe { USB_BUS.as_ref().unwrap() }, leds);
+        let usb_class = keyberon::new_class(unsafe { USB_BUS.as_ref().unwrap() }, ());
         let usb_dev = keyberon::new_device(unsafe { USB_BUS.as_ref().unwrap() });
 
-        type usb_class = keyberon::Class<'static, usb::UsbBusType, ()>;
+        // let usb_class = keyberon::new_class(&usb_bus, ());
+        // let usb_dev = keyberon::new_device(&usb_bus);
+
+        // type usb_class = keyberon::Class<'static, usb::UsbBusType, ()>;
         // type usb_dev = usb_device::device::UsbDevice<'static, usb::UsbBusType>;
 
         // watchdog.start(10_000.microseconds());
-        watchdog.start(10_000_u32);
+        // watchdog.start(10_000_u32);
+        watchdog.start(MicrosDurationU32::micros(10_000_u32));
 
         let matrix = DemuxMatrix::new(
             [
@@ -216,8 +227,7 @@ mod app {
 
         alarm.lock(|a| {
             a.clear_interrupt();
-            // let _ = a.schedule(SCAN_TIME_US.microseconds());
-            let _ = a.schedule(SCAN_TIME_US);
+            a.schedule(MicrosDurationU32::micros(SCAN_TIME_US));
         });
 
         c.shared.watchdog.feed();

@@ -17,7 +17,7 @@ dependencies = [
  "panic-probe",
  "rp2040-boot2",
  "rp2040-hal",
- "usb-device 0.2.9",
+ "usb-device",
 ]
 
 [[package]]
@@ -413,7 +413,7 @@ dependencies = [
  "embedded-hal 1.0.0",
  "heapless 0.8.0",
  "keyberon-macros",
- "usb-device 0.3.2",
+ "usb-device",
 ]
 
 [[package]]
@@ -686,7 +686,7 @@ dependencies = [
  "rp-hal-common",
  "rp2040-hal-macros",
  "rp2040-pac",
- "usb-device 0.3.2",
+ "usb-device",
  "vcell",
  "void",
 ]
@@ -846,12 +846,6 @@ name = "unicode-ident"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5a5f39404a5da50712a4c1eecf25e90dd62b613502b7e925fd4e4d19b5c96512"
-
-[[package]]
-name = "usb-device"
-version = "0.2.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f6cc3adc849b5292b4075fc0d5fdcf2f24866e88e336dd27a8943090a520508"
 
 [[package]]
 name = "usb-device"
