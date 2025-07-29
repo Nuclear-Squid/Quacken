@@ -1,0 +1,3 @@
+cargo:rustc-link-search=/home/kaze/www/kbd/quacken/firmware/target/debug/build/rp2040-pac-e6e1bca58e947603/out
+cargo:rerun-if-changed=device.x
+cargo:rerun-if-changed=build.rs

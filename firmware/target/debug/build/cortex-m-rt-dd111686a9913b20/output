@@ -1,0 +1,8 @@
+cargo:rustc-check-cfg=cfg(armv6m)
+cargo:rustc-check-cfg=cfg(armv7m)
+cargo:rustc-check-cfg=cfg(armv8m)
+cargo:rustc-check-cfg=cfg(cortex_m)
+cargo:rustc-check-cfg=cfg(has_fpu)
+cargo:rustc-link-search=/home/kaze/www/kbd/quacken/firmware/target/debug/build/cortex-m-rt-dd111686a9913b20/out
+cargo:rerun-if-changed=build.rs
+cargo:rerun-if-changed=link.x.in
