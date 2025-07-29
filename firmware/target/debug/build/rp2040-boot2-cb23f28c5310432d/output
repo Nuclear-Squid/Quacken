@@ -1,1 +1,0 @@
-cargo:warning=Using prebuilt boot2 files. use feature `assemble` to rebuild instead (requires GNU toolchain)
