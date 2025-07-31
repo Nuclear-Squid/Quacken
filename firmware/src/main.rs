@@ -28,7 +28,7 @@ mod app {
 
     // rp2040 implementations of the embedded_hal::digital::{InputPin,OutputPin} traits
     type InputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioInput, gpio::PullUp>;
-    type OutputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioOutput, gpio::PullUp>;
+    type OutputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioOutput, gpio::PullDown>;
 
     // use core::iter::once;
 
@@ -145,22 +145,22 @@ mod app {
         // Quacken keyberon matrix, new rp2040 API
         let matrix = Matrix::new(
             [
-                pins.gpio3.into_pull_up_input(),
-                pins.gpio4.into_pull_up_input(),
-                pins.gpio5.into_pull_up_input(),
-                pins.gpio9.into_pull_up_input(),
-                pins.gpio18.into_pull_up_input(),
-                pins.gpio19.into_pull_up_input(),
-                pins.gpio20.into_pull_up_input(),
-                pins.gpio10.into_pull_up_input(),
+                pins.gpio3.into_pull_up_input().into_dyn_pin(),
+                pins.gpio4.into_pull_up_input().into_dyn_pin(),
+                pins.gpio5.into_pull_up_input().into_dyn_pin(),
+                pins.gpio9.into_pull_up_input().into_dyn_pin(),
+                pins.gpio18.into_pull_up_input().into_dyn_pin(),
+                pins.gpio19.into_pull_up_input().into_dyn_pin(),
+                pins.gpio20.into_pull_up_input().into_dyn_pin(),
+                pins.gpio10.into_pull_up_input().into_dyn_pin(),
             ],
             [
-                pins.gpio16.into_push_pull_output(),
-                pins.gpio14.into_push_pull_output(),
-                pins.gpio15.into_push_pull_output(),
-                pins.gpio8.into_push_pull_output(),
-                pins.gpio7.into_push_pull_output(),
-                pins.gpio6.into_push_pull_output(),
+                pins.gpio16.into_push_pull_output().into_dyn_pin(),
+                pins.gpio14.into_push_pull_output().into_dyn_pin(),
+                pins.gpio15.into_push_pull_output().into_dyn_pin(),
+                pins.gpio8.into_push_pull_output().into_dyn_pin(),
+                pins.gpio7.into_push_pull_output().into_dyn_pin(),
+                pins.gpio6.into_push_pull_output().into_dyn_pin(),
             ],
         );
 
