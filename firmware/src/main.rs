@@ -10,9 +10,6 @@ pub static BOOT2: [u8; 256] = rp2040_boot2::BOOT_LOADER_W25Q080;
 
 #[rtic::app(device = rp2040_hal::pac, peripherals = true, dispatchers = [PIO0_IRQ_0, PIO0_IRQ_1, PIO1_IRQ_0])]
 mod app {
-    use cortex_m::prelude::{
-        _embedded_hal_watchdog_Watchdog, _embedded_hal_watchdog_WatchdogEnable,
-    };
     use defmt_rtt as _;
     // use embedded_time::duration::Extensions;
     // use embedded_time::rate::Extensions as RateExtensions;
@@ -232,7 +229,7 @@ mod app {
     }
 
     #[task(binds = TIMER_IRQ_0, priority = 1, shared = [matrix, debouncer, timer, alarm, watchdog, usb_dev, usb_class])]
-    fn scan_timer_irq(mut c: scan_timer_irq::Context) {
+    fn scan_timer_irq(c: scan_timer_irq::Context) {
         let mut alarm = c.shared.alarm;
 
         alarm.lock(|a| {
