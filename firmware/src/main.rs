@@ -19,24 +19,19 @@ mod app {
     use panic_probe as _;
     use rp2040_hal::{
         self,
-
-        // clocks::{init_clocks_and_plls, Clock},
-        // gpio::{bank0::*, dynpin::DynPin},
-        // pac::{I2C0, PIO0},
-        // pio::{PIOExt, SM0, SM1},
-
         fugit::MicrosDurationU32,
-
         clocks::init_clocks_and_plls,
-        gpio::dynpin::DynPin,
-        // gpio::Pins,
         pio::PIOExt,
-
         sio::Sio,
         timer::{ Alarm, Alarm0, Timer },
         usb::UsbBus,
         watchdog::Watchdog,
+        gpio,
     };
+
+    // rp2040 implementations of the embedded_hal::digital::{InputPin,OutputPin} traits
+    type InputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioInput, gpio::PullUp>;
+    type OutputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioOutput, gpio::PullUp>;
 
     // use core::iter::once;
 
@@ -46,14 +41,13 @@ mod app {
     use keyberon::debounce::Debouncer;
     use keyberon::key_code;
     use keyberon::layout::{CustomEvent, Event, Layout};
+    use keyberon::matrix::Matrix;
     // use keyberon::keyboard::Leds;
 
     use usb_device::{
         prelude::UsbDeviceState,
         class_prelude::UsbBusAllocator,
-
-        // HACK: Import UsbClass trait, but still allow to use it’s name for
-        // a type later
+        // HACK: import the UsbClass trait, but still allow to use its name for a type later
         class::UsbClass as _,
     };
 
@@ -72,8 +66,8 @@ mod app {
         timer: Timer,
         alarm: Alarm0,
         #[lock_free]
-        matrix: DemuxMatrix<DynPin, DynPin, 16, 5>,
-        layout: Layout<16, 5, 1, kb_layout::CustomActions>,
+        matrix: Matrix<InputPin, OutputPin, 8, 6>,
+        layout: Layout<12, 4, 1, kb_layout::CustomActions>,
         #[lock_free]
         debouncer: Debouncer<[[bool; 16]; 5]>,
         #[lock_free]
@@ -100,6 +94,7 @@ mod app {
         )
         .unwrap();
 
+        // https://github.com/rp-rs/rp-hal/blob/main/rp2040-hal-examples/src/bin/gpio_in_out.rs
         let sio = Sio::new(c.device.SIO);
         let pins = rp2040_hal::gpio::Pins::new(
             c.device.IO_BANK0,
@@ -130,17 +125,10 @@ mod app {
         let usb_class = keyberon::new_class(unsafe { USB_BUS.as_ref().unwrap() }, ());
         let usb_dev = keyberon::new_device(unsafe { USB_BUS.as_ref().unwrap() });
 
-        // let usb_class = keyberon::new_class(&usb_bus, ());
-        // let usb_dev = keyberon::new_device(&usb_bus);
-
-        // type usb_class = keyberon::Class<'static, usb::UsbBusType, ()>;
-        // type usb_dev = usb_device::device::UsbDevice<'static, usb::UsbBusType>;
-
-        // watchdog.start(10_000.microseconds());
-        // watchdog.start(10_000_u32);
         watchdog.start(MicrosDurationU32::micros(10_000_u32));
 
-        let matrix = DemuxMatrix::new(
+        // Nibble demux matrix, old rp2040 API
+        let demux_matrix = DemuxMatrix::new(
             [
                 pins.gpio29.into_push_pull_output().into(),
                 pins.gpio28.into_push_pull_output().into(),
@@ -155,6 +143,28 @@ mod app {
                 pins.gpio4.into_pull_up_input().into(),
             ],
             16,
+        );
+
+        // Quacken keyberon matrix, new rp2040 API
+        let matrix = Matrix::new(
+            [
+                pins.gpio3.into_pull_up_input(),
+                pins.gpio4.into_pull_up_input(),
+                pins.gpio5.into_pull_up_input(),
+                pins.gpio9.into_pull_up_input(),
+                pins.gpio18.into_pull_up_input(),
+                pins.gpio19.into_pull_up_input(),
+                pins.gpio20.into_pull_up_input(),
+                pins.gpio10.into_pull_up_input(),
+            ],
+            [
+                pins.gpio16.into_push_pull_output(),
+                pins.gpio14.into_push_pull_output(),
+                pins.gpio15.into_push_pull_output(),
+                pins.gpio8.into_push_pull_output(),
+                pins.gpio7.into_push_pull_output(),
+                pins.gpio6.into_push_pull_output(),
+            ],
         );
 
         (
