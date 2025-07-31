@@ -4,16 +4,19 @@
 mod demux_matrix;
 mod layout;
 
+// set the panic handler
+use panic_halt as _;
+
 #[link_section = ".boot2"]
 #[used]
 pub static BOOT2: [u8; 256] = rp2040_boot2::BOOT_LOADER_W25Q080;
 
 #[rtic::app(device = rp2040_hal::pac, peripherals = true, dispatchers = [PIO0_IRQ_0, PIO0_IRQ_1, PIO1_IRQ_0])]
 mod app {
-    use defmt_rtt as _;
-    // use embedded_time::duration::Extensions;
-    // use embedded_time::rate::Extensions as RateExtensions;
-    use panic_probe as _;
+    use crate::layout as kb_layout;
+
+    // use defmt_rtt as _;
+
     use rp2040_hal::{
         self,
         fugit::MicrosDurationU32,
@@ -32,14 +35,12 @@ mod app {
 
     // use core::iter::once;
 
-    use crate::demux_matrix::DemuxMatrix;
-    use crate::layout as kb_layout;
-
-    use keyberon::debounce::Debouncer;
-    use keyberon::key_code;
-    use keyberon::layout::{CustomEvent, Event, Layout};
-    use keyberon::matrix::Matrix;
-    // use keyberon::keyboard::Leds;
+    use keyberon::{
+        debounce::Debouncer,
+        key_code,
+        layout::{CustomEvent, Event, Layout},
+        matrix::Matrix,
+    };
 
     use usb_device::{
         prelude::UsbDeviceState,
@@ -124,25 +125,6 @@ mod app {
 
         watchdog.start(MicrosDurationU32::micros(10_000_u32));
 
-        // Nibble demux matrix, old rp2040 API
-        let demux_matrix = DemuxMatrix::new(
-            [
-                pins.gpio29.into_push_pull_output().into(),
-                pins.gpio28.into_push_pull_output().into(),
-                pins.gpio27.into_push_pull_output().into(),
-                pins.gpio26.into_push_pull_output().into(),
-            ],
-            [
-                pins.gpio18.into_pull_up_input().into(),
-                pins.gpio20.into_pull_up_input().into(),
-                pins.gpio19.into_pull_up_input().into(),
-                pins.gpio10.into_pull_up_input().into(),
-                pins.gpio4.into_pull_up_input().into(),
-            ],
-            16,
-        );
-
-        // Quacken keyberon matrix, new rp2040 API
         let matrix = Matrix::new(
             [
                 pins.gpio3.into_pull_up_input().into_dyn_pin(),
