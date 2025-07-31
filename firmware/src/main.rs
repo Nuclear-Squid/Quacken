@@ -1,7 +1,6 @@
 #![no_std]
 #![no_main]
 
-mod demux_matrix;
 mod layout;
 
 // set the panic handler
@@ -15,13 +14,10 @@ pub static BOOT2: [u8; 256] = rp2040_boot2::BOOT_LOADER_W25Q080;
 mod app {
     use crate::layout as kb_layout;
 
-    // use defmt_rtt as _;
-
     use rp2040_hal::{
         self,
         fugit::MicrosDurationU32,
         clocks::init_clocks_and_plls,
-        pio::PIOExt,
         sio::Sio,
         timer::{ Alarm, Alarm0, Timer },
         usb::UsbBus,
@@ -33,7 +29,7 @@ mod app {
     type InputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioInput, gpio::PullUp>;
     type OutputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioOutput, gpio::PullDown>;
 
-    // use core::iter::once;
+    // use core:iter::once;
 
     use keyberon::{
         debounce::Debouncer,
@@ -65,7 +61,7 @@ mod app {
         alarm: Alarm0,
         #[lock_free]
         matrix: Matrix<InputPin, OutputPin, 8, 6>,
-        layout: Layout<8, 6, 1, kb_layout::CustomActions>,
+        layout: Layout<12, 4, 1, kb_layout::CustomActions>,
         #[lock_free]
         debouncer: Debouncer<[[bool; 8]; 6]>,
         #[lock_free]
@@ -103,10 +99,10 @@ mod app {
 
         let mut timer = Timer::new(c.device.TIMER, &mut resets, &clocks);
         let mut alarm = timer.alarm_0().unwrap();
-        alarm.schedule(MicrosDurationU32::micros(SCAN_TIME_US));
+        alarm
+            .schedule(MicrosDurationU32::micros(SCAN_TIME_US))
+            .expect("Couldn’t schedule matrix scan, kb is effectively bricked");
         alarm.enable_interrupt();
-
-        let (mut pio, sm0, sm1, _, _) = c.device.PIO0.split(&mut resets);
 
         let usb_bus = UsbBusAllocator::new(UsbBus::new(
             c.device.USBCTRL_REGS,
@@ -120,6 +116,7 @@ mod app {
             USB_BUS = Some(usb_bus);
         }
 
+        // XXX shared reference to mutable static
         let usb_class = keyberon::new_class(unsafe { USB_BUS.as_ref().unwrap() }, ());
         let usb_dev = keyberon::new_device(unsafe { USB_BUS.as_ref().unwrap() });
 
@@ -191,7 +188,27 @@ mod app {
                 }
             }
             Some(e) => {
-                layout.lock(|l| l.event(e));
+                // fit the 4*12 layout into the 8*6 matrix (Quacken Zero)
+                use keyberon::layout::Event as E;
+                let evt = match e {
+                    E::Press(row, col) => {
+                        if row >= 4 {
+                            E::Press(row - 4, col)
+                        }
+                        else {
+                            E::Press(row, 11 - col)
+                        }
+                    },
+                    E::Release(row, col) => {
+                        if row >= 4 {
+                            E::Release(row - 4, col)
+                        }
+                        else {
+                            E::Release(row, 11 - col)
+                        }
+                    }
+                };
+                layout.lock(|l| l.event(evt));
                 return;
             }
         }
@@ -216,7 +233,8 @@ mod app {
 
         alarm.lock(|a| {
             a.clear_interrupt();
-            a.schedule(MicrosDurationU32::micros(SCAN_TIME_US));
+            a.schedule(MicrosDurationU32::micros(SCAN_TIME_US))
+                .expect("Couldn’t schedule matrix scan, kb is effectively bricked");
         });
 
         c.shared.watchdog.feed();
