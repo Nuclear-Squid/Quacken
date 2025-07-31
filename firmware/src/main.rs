@@ -67,9 +67,9 @@ mod app {
         alarm: Alarm0,
         #[lock_free]
         matrix: Matrix<InputPin, OutputPin, 8, 6>,
-        layout: Layout<12, 4, 1, kb_layout::CustomActions>,
+        layout: Layout<8, 6, 1, kb_layout::CustomActions>,
         #[lock_free]
-        debouncer: Debouncer<[[bool; 16]; 5]>,
+        debouncer: Debouncer<[[bool; 8]; 6]>,
         #[lock_free]
         watchdog: Watchdog,
     }
@@ -174,7 +174,7 @@ mod app {
                 timer,
                 alarm,
                 matrix: matrix.unwrap(),
-                debouncer: Debouncer::new([[false; 16]; 5], [[false; 16]; 5], 10),
+                debouncer: Debouncer::new([[false; 8]; 6], [[false; 8]; 6], 10),
                 layout: Layout::new(&kb_layout::LAYERS),
                 watchdog,
             },
