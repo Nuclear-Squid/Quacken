@@ -10,7 +10,11 @@ use panic_halt as _;
 #[used]
 pub static BOOT2: [u8; 256] = rp2040_boot2::BOOT_LOADER_W25Q080;
 
-#[rtic::app(device = rp2040_hal::pac, peripherals = true, dispatchers = [PIO0_IRQ_0, PIO0_IRQ_1, PIO1_IRQ_0])]
+#[rtic::app(
+    device = rp2040_hal::pac,
+    peripherals = true,
+    dispatchers = [PIO0_IRQ_0, PIO0_IRQ_1, PIO1_IRQ_0]
+)]
 mod app {
     use crate::layout as kb_layout;
 
@@ -28,11 +32,13 @@ mod app {
         gpio,
     };
 
-    use embedded_hal::digital::v2::OutputPin as _;
-
-    // rp2040 implementations of the embedded_hal::digital::{InputPin,OutputPin} traits
-    type InputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioInput, gpio::PullUp>;
-    type OutputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioOutput, gpio::PullDown>;
+    // Import the InputPin and OutputPin trait 
+    // XXX rust-analyzer reports that OutputPin is used, but InputPin is not
+    use embedded_hal::digital::v2::InputPin;
+    use embedded_hal::digital::v2::OutputPin;
+    // rp2040 implementations of the embedded_hal::digital::v2::{InputPin,OutputPin} traits
+    type KbInputPin  = gpio::Pin<gpio::DynPinId, gpio::FunctionSioInput,  gpio::PullUp>;
+    type KbOutputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioOutput, gpio::PullDown>;
 
     use keyberon::{
         debounce::Debouncer,
@@ -63,9 +69,11 @@ mod app {
         }
     }
 
-    // Fun fact, keayboard is invisible to `lsusb` if scan time is set to 10_000 or above.
-    const SCAN_TIME_US: u32 = 1000;
-    const EXTERNAL_XTAL_FREQ_HZ: u32 = 12_000_000u32;
+    // Fun fact: the keyboard is invisible to `lsusb`
+    // if the scan time is set to 10_000 us or above.
+    const SCAN_TIME_US:          u32 = 1_000;
+    const WATCHDOG_TIME_US:      u32 = 10_000;
+    const EXTERNAL_XTAL_FREQ_HZ: u32 = 12_000_000;
 
     #[shared]
     struct Shared {
@@ -75,16 +83,12 @@ mod app {
         #[lock_free]
         watchdog: Watchdog,
         #[lock_free]
-        led_pin: gpio::Pin<
-            gpio::bank0::Gpio25,
-            gpio::FunctionSioOutput,
-            gpio::PullDown
-        >,
+        led_pin: gpio::Pin<gpio::bank0::Gpio25, gpio::FunctionSioOutput, gpio::PullDown>,
     }
 
     #[local]
     struct Local {
-        matrix: Matrix<InputPin, OutputPin, 8, 6>,
+        matrix: Matrix<KbInputPin, KbOutputPin, 8, 6>,
         layout: Layout<8, 6, 1, ()>,
         debouncer: Debouncer<[[bool; 8]; 6]>,
         timer: Timer,
@@ -116,6 +120,7 @@ mod app {
         )
         .unwrap();
 
+        // XXX debgg (Raspberry Pi Pico)
         let led_pin = pins.gpio25.into_push_pull_output();
 
         let mut timer = Timer::new(c.device.TIMER, &mut resets, &clocks);
@@ -139,7 +144,7 @@ mod app {
         let usb_class = keyberon::new_class(usb_bus, ());
         let usb_dev = keyberon::new_device(usb_bus);
 
-        watchdog.start(MicrosDurationU32::micros(10_000_u32));
+        watchdog.start(MicrosDurationU32::micros(WATCHDOG_TIME_US));
 
         let Ok(matrix) = cortex_m::interrupt::free(move |_cs| {
             Matrix::new(
@@ -170,7 +175,7 @@ mod app {
                 usb_class,
                 alarm,
                 watchdog,
-                led_pin,
+                led_pin, // XXX debug
             },
             Local {
                 matrix,
@@ -182,6 +187,7 @@ mod app {
         )
     }
 
+    // USB events (polling)
     #[task(
         binds = USBCTRL_IRQ,
         priority = 4,
@@ -197,6 +203,7 @@ mod app {
         });
     }
 
+    // keyboard events (timer)
     #[task(
         binds = TIMER_IRQ_0,
         priority = 1,
@@ -204,9 +211,6 @@ mod app {
         shared = [led_pin, alarm, watchdog, usb_dev, usb_class],
     )]
     fn process_kbd_events(mut c: process_kbd_events::Context) {
-        static mut LED_TURNED_ON: bool = false;
-        static mut LED_COUNTER: u32 = 100;
-
         c.shared.alarm.lock(|a| {
             a.clear_interrupt();
             a.schedule(MicrosDurationU32::micros(SCAN_TIME_US))
@@ -218,15 +222,13 @@ mod app {
 
         for event in c.local.debouncer.events(c.local.matrix.get().get()) {
             c.local.layout.event(event);
-            // // Fit the 4*12 layout into the 8 * 6 matrix (Quacken Zero)
+            // // Quacken Zero: Fit the 4*12 logical layout into the 8*6 physical matrix
             // let physical_key = {
             //     if event.coord().0 >= 4 {
-            //         // event.transform(|row, col| (row - 4, col))
-            //         continue;
+            //         event.transform(|row, col| (row - 4, col))
             //     }
             //     else {
-            //         // event.transform(|row, col| (row, 11 - col))
-            //         event
+            //         event.transform(|row, col| (row, 11 - col))
             //     }
             // };
             //
@@ -239,7 +241,7 @@ mod app {
             return;
         }
 
-        // No matter what we do above, this always fails
+        // XXX No matter what we do above, this always fails
         let report: KbHidReport = c.local.layout.keycodes().collect();
         if !c
             .shared
@@ -249,7 +251,10 @@ mod app {
             return;
         }
 
-        unsafe {
+        unsafe { // XXX dirty debugging: blink the Pico LED
+            static mut LED_TURNED_ON: bool = false;
+            static mut LED_COUNTER: u32 = 100;
+
             if LED_COUNTER == 0 {
                 LED_COUNTER = 100;
                 if LED_TURNED_ON {
