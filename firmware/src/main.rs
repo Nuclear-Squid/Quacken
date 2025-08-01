@@ -25,6 +25,8 @@ mod app {
         gpio,
     };
 
+    use embedded_hal::digital::v2::OutputPin as _;
+
     // rp2040 implementations of the embedded_hal::digital::{InputPin,OutputPin} traits
     type InputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioInput, gpio::PullUp>;
     type OutputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioOutput, gpio::PullDown>;
@@ -41,12 +43,13 @@ mod app {
         class_prelude::UsbBusAllocator,
         // HACK: import the UsbClass trait, but still allow to use its name for a type later
         class::UsbClass as _,
+        bus::UsbBus as _,
     };
 
     type UsbClass = keyberon::Class<'static, UsbBus, ()>;
     type UsbDevice = usb_device::device::UsbDevice<'static, UsbBus>;
 
-    const SCAN_TIME_US: u32 = 1000;
+    const SCAN_TIME_US: u32 = 10_000;
     const EXTERNAL_XTAL_FREQ_HZ: u32 = 12_000_000u32;
 
     #[shared]
@@ -56,6 +59,12 @@ mod app {
         alarm: Alarm0,
         #[lock_free]
         watchdog: Watchdog,
+        #[lock_free]
+        led_pin: gpio::Pin<
+            gpio::bank0::Gpio25,
+            gpio::FunctionSioOutput,
+            gpio::PullDown
+        >,
     }
 
     #[local]
@@ -68,7 +77,16 @@ mod app {
 
     #[init(local = [bus: Option<UsbBusAllocator<UsbBus>> = None])]
     fn init(c: init::Context) -> (Shared, Local, init::Monotonics) {
+        // https://github.com/rp-rs/rp-hal/blob/main/rp2040-hal-examples/src/bin/gpio_in_out.rs
         let mut resets = c.device.RESETS;
+        let sio = Sio::new(c.device.SIO);
+        let pins = rp2040_hal::gpio::Pins::new(
+            c.device.IO_BANK0,
+            c.device.PADS_BANK0,
+            sio.gpio_bank0,
+            &mut resets,
+        );
+
         let mut watchdog = Watchdog::new(c.device.WATCHDOG);
         watchdog.pause_on_debug(false);
 
@@ -83,14 +101,7 @@ mod app {
         )
         .unwrap();
 
-        // https://github.com/rp-rs/rp-hal/blob/main/rp2040-hal-examples/src/bin/gpio_in_out.rs
-        let sio = Sio::new(c.device.SIO);
-        let pins = rp2040_hal::gpio::Pins::new(
-            c.device.IO_BANK0,
-            c.device.PADS_BANK0,
-            sio.gpio_bank0,
-            &mut resets,
-        );
+        let led_pin = pins.gpio25.into_push_pull_output();
 
         let mut timer = Timer::new(c.device.TIMER, &mut resets, &clocks);
         let mut alarm = timer.alarm_0().unwrap();
@@ -115,7 +126,7 @@ mod app {
 
         watchdog.start(MicrosDurationU32::micros(10_000_u32));
 
-        let matrix = Matrix::new(
+        let Ok(matrix) = Matrix::new(
             [
                 pins.gpio3.into_pull_up_input().into_dyn_pin(),
                 pins.gpio4.into_pull_up_input().into_dyn_pin(),
@@ -142,9 +153,10 @@ mod app {
                 usb_class,
                 alarm,
                 watchdog,
+                led_pin,
             },
             Local {
-                matrix: matrix.unwrap(),
+                matrix,
                 layout: Layout::new(&kb_layout::LAYERS),
                 debouncer: Debouncer::new([[false; 8]; 6], [[false; 8]; 6], 10),
                 timer,
@@ -171,14 +183,17 @@ mod app {
     #[task(
         binds = TIMER_IRQ_0,
         priority = 1,
-        shared = [alarm, watchdog, usb_dev, usb_class],
+        shared = [led_pin, alarm, watchdog, usb_dev, usb_class],
         local = [matrix, layout, debouncer, timer],
     )]
-    fn process_kb_events(mut c: process_kb_events::Context) {
+    fn process_kbd_events(mut c: process_kbd_events::Context) {
+        static mut LED_TURNED_ON: bool = false;
+
         c.shared.alarm.lock(|a| {
             a.clear_interrupt();
             a.schedule(MicrosDurationU32::micros(SCAN_TIME_US))
                 .expect("Couldn’t schedule matrix scan, kb is effectively bricked");
+            a.enable_interrupt();
         });
 
         c.shared.watchdog.feed();
@@ -197,10 +212,24 @@ mod app {
             c.local.layout.event(physical_key);
         }
 
-        if c.shared.usb_dev.lock(|d| d.state()) != UsbDeviceState::Configured {
+        // Usb device is stuck in `Suspend` mode.
+        // if c.shared.usb_dev.lock(|d| d.state()) != UsbDeviceState::Configured {
+        if c.shared.usb_dev.lock(|d| d.state()) != UsbDeviceState::Suspend {
             return;
         }
 
+        // If we compare usb device state against `Suspend`, builtin led blinks.
+        // If we compare usb device state against `Configured`, builtin led is off.
+        unsafe {
+            if LED_TURNED_ON {
+                c.shared.led_pin.set_low().unwrap();
+            } else {
+                c.shared.led_pin.set_high().unwrap();
+            }
+            LED_TURNED_ON = !LED_TURNED_ON;
+        }
+
+        // No matter what we do above, this always fails
         let report: KbHidReport = c.local.layout.keycodes().collect();
         if !c
             .shared
