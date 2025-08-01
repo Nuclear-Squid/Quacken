@@ -29,12 +29,10 @@ mod app {
     type InputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioInput, gpio::PullUp>;
     type OutputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioOutput, gpio::PullDown>;
 
-    // use core:iter::once;
-
     use keyberon::{
         debounce::Debouncer,
-        key_code,
-        layout::{CustomEvent, Event, Layout},
+        key_code::KbHidReport,
+        layout::{ Event, Layout },
         matrix::Matrix,
     };
 
@@ -51,27 +49,24 @@ mod app {
     const SCAN_TIME_US: u32 = 1000;
     const EXTERNAL_XTAL_FREQ_HZ: u32 = 12_000_000u32;
 
-    static mut USB_BUS: Option<UsbBusAllocator<UsbBus>> = None;
-
     #[shared]
     struct Shared {
         usb_dev: UsbDevice,
         usb_class: UsbClass,
-        timer: Timer,
         alarm: Alarm0,
-        #[lock_free]
-        matrix: Matrix<InputPin, OutputPin, 8, 6>,
-        layout: Layout<12, 4, 1, kb_layout::CustomActions>,
-        #[lock_free]
-        debouncer: Debouncer<[[bool; 8]; 6]>,
         #[lock_free]
         watchdog: Watchdog,
     }
 
     #[local]
-    struct Local {}
+    struct Local {
+        matrix: Matrix<InputPin, OutputPin, 8, 6>,
+        layout: Layout<12, 4, 1, kb_layout::CustomActions>,
+        debouncer: Debouncer<[[bool; 8]; 6]>,
+        timer: Timer,
+    }
 
-    #[init]
+    #[init(local = [bus: Option<UsbBusAllocator<UsbBus>> = None])]
     fn init(c: init::Context) -> (Shared, Local, init::Monotonics) {
         let mut resets = c.device.RESETS;
         let mut watchdog = Watchdog::new(c.device.WATCHDOG);
@@ -104,21 +99,19 @@ mod app {
             .expect("Couldn’t schedule matrix scan, kb is effectively bricked");
         alarm.enable_interrupt();
 
-        let usb_bus = UsbBusAllocator::new(UsbBus::new(
+        let usb = UsbBus::new(
             c.device.USBCTRL_REGS,
             c.device.USBCTRL_DPRAM,
             clocks.usb_clock,
             true,
             &mut resets,
-        ));
+        );
 
-        unsafe {
-            USB_BUS = Some(usb_bus);
-        }
+        *c.local.bus = Some(UsbBusAllocator::new(usb));
+        let usb_bus = c.local.bus.as_ref().unwrap();
 
-        // XXX shared reference to mutable static
-        let usb_class = keyberon::new_class(unsafe { USB_BUS.as_ref().unwrap() }, ());
-        let usb_dev = keyberon::new_device(unsafe { USB_BUS.as_ref().unwrap() });
+        let usb_class = keyberon::new_class(usb_bus, ());
+        let usb_dev = keyberon::new_device(usb_bus);
 
         watchdog.start(MicrosDurationU32::micros(10_000_u32));
 
@@ -147,14 +140,15 @@ mod app {
             Shared {
                 usb_dev,
                 usb_class,
-                timer,
                 alarm,
-                matrix: matrix.unwrap(),
-                debouncer: Debouncer::new([[false; 8]; 6], [[false; 8]; 6], 10),
-                layout: Layout::new(&kb_layout::LAYERS),
                 watchdog,
             },
-            Local {},
+            Local {
+                matrix: matrix.unwrap(),
+                layout: Layout::new(&kb_layout::LAYERS),
+                debouncer: Debouncer::new([[false; 8]; 6], [[false; 8]; 6], 10),
+                timer,
+            },
             init::Monotonics(),
         )
     }
@@ -170,23 +164,32 @@ mod app {
         });
     }
 
-    #[task(priority = 2, capacity = 8, shared = [usb_dev, usb_class, layout])]
+    #[task(
+        priority = 2,
+        capacity = 8,
+        shared = [usb_dev, usb_class],
+        local = [layout],
+    )]
     fn handle_event(mut c: handle_event::Context, event: Option<Event>) {
-        let mut layout = c.shared.layout;
+        let layout = c.local.layout;
         match event {
             None => {
-                if let CustomEvent::Press(event) = layout.lock(|l| l.tick()) {
-                    match event {
-                        kb_layout::CustomActions::Underglow => {
-                        }
-                        kb_layout::CustomActions::Bootloader => {
-                            rp2040_hal::rom_data::reset_to_usb_boot(0, 0);
-                        }
-                        kb_layout::CustomActions::Display => {
-                        }
-                    };
+                let report: KbHidReport = layout.keycodes().collect();
+                if !c
+                    .shared
+                    .usb_class
+                    .lock(|k| k.device_mut().set_keyboard_report(report.clone()))
+                {
+                    return;
                 }
+
+                if c.shared.usb_dev.lock(|d| d.state()) != UsbDeviceState::Configured {
+                    return;
+                }
+
+                while let Ok(0) = c.shared.usb_class.lock(|k| k.write(report.as_bytes())) {}
             }
+
             Some(e) => {
                 // fit the 4*12 layout into the 8*6 matrix (Quacken Zero)
                 use keyberon::layout::Event as E;
@@ -208,26 +211,18 @@ mod app {
                         }
                     }
                 };
-                layout.lock(|l| l.event(evt));
-                return;
+
+                layout.event(evt);
             }
         }
-
-        let report: key_code::KbHidReport = layout.lock(|l| l.keycodes().collect());
-        if !c
-            .shared
-            .usb_class
-            .lock(|k| k.device_mut().set_keyboard_report(report.clone()))
-        {
-            return;
-        }
-        if c.shared.usb_dev.lock(|d| d.state()) != UsbDeviceState::Configured {
-            return;
-        }
-        while let Ok(0) = c.shared.usb_class.lock(|k| k.write(report.as_bytes())) {}
     }
 
-    #[task(binds = TIMER_IRQ_0, priority = 1, shared = [matrix, debouncer, timer, alarm, watchdog, usb_dev, usb_class])]
+    #[task(
+        binds = TIMER_IRQ_0,
+        priority = 1,
+        shared = [alarm, watchdog, usb_dev, usb_class],
+        local = [matrix, debouncer, timer],
+    )]
     fn scan_timer_irq(c: scan_timer_irq::Context) {
         let mut alarm = c.shared.alarm;
 
@@ -239,7 +234,7 @@ mod app {
 
         c.shared.watchdog.feed();
 
-        for event in c.shared.debouncer.events(c.shared.matrix.get().unwrap()) {
+        for event in c.local.debouncer.events(c.local.matrix.get().unwrap()) {
             handle_event::spawn(Some(event)).unwrap();
         }
 
