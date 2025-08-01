@@ -32,7 +32,7 @@ mod app {
     use keyberon::{
         debounce::Debouncer,
         key_code::KbHidReport,
-        layout::{ Event, Layout },
+        layout::Layout,
         matrix::Matrix,
     };
 
@@ -153,7 +153,11 @@ mod app {
         )
     }
 
-    #[task(binds = USBCTRL_IRQ, priority = 4, shared = [usb_dev, usb_class])]
+    #[task(
+        binds = USBCTRL_IRQ,
+        priority = 4,
+        shared = [usb_dev, usb_class]
+    )]
     fn usb_rx(c: usb_rx::Context) {
         let usb = c.shared.usb_dev;
         let kb = c.shared.usb_class;
@@ -165,68 +169,13 @@ mod app {
     }
 
     #[task(
-        priority = 2,
-        capacity = 8,
-        shared = [usb_dev, usb_class],
-        local = [layout],
-    )]
-    fn handle_event(mut c: handle_event::Context, event: Option<Event>) {
-        let layout = c.local.layout;
-        match event {
-            None => {
-                let report: KbHidReport = layout.keycodes().collect();
-                if !c
-                    .shared
-                    .usb_class
-                    .lock(|k| k.device_mut().set_keyboard_report(report.clone()))
-                {
-                    return;
-                }
-
-                if c.shared.usb_dev.lock(|d| d.state()) != UsbDeviceState::Configured {
-                    return;
-                }
-
-                while let Ok(0) = c.shared.usb_class.lock(|k| k.write(report.as_bytes())) {}
-            }
-
-            Some(e) => {
-                // fit the 4*12 layout into the 8*6 matrix (Quacken Zero)
-                use keyberon::layout::Event as E;
-                let evt = match e {
-                    E::Press(row, col) => {
-                        if row >= 4 {
-                            E::Press(row - 4, col)
-                        }
-                        else {
-                            E::Press(row, 11 - col)
-                        }
-                    },
-                    E::Release(row, col) => {
-                        if row >= 4 {
-                            E::Release(row - 4, col)
-                        }
-                        else {
-                            E::Release(row, 11 - col)
-                        }
-                    }
-                };
-
-                layout.event(evt);
-            }
-        }
-    }
-
-    #[task(
         binds = TIMER_IRQ_0,
         priority = 1,
         shared = [alarm, watchdog, usb_dev, usb_class],
-        local = [matrix, debouncer, timer],
+        local = [matrix, layout, debouncer, timer],
     )]
-    fn scan_timer_irq(c: scan_timer_irq::Context) {
-        let mut alarm = c.shared.alarm;
-
-        alarm.lock(|a| {
+    fn process_kb_events(mut c: process_kb_events::Context) {
+        c.shared.alarm.lock(|a| {
             a.clear_interrupt();
             a.schedule(MicrosDurationU32::micros(SCAN_TIME_US))
                 .expect("Couldn’t schedule matrix scan, kb is effectively bricked");
@@ -235,9 +184,32 @@ mod app {
         c.shared.watchdog.feed();
 
         for event in c.local.debouncer.events(c.local.matrix.get().unwrap()) {
-            handle_event::spawn(Some(event)).unwrap();
+            // Fit the 4*12 layout into the 8 * 6 matrix (Quacken Zero)
+            let physical_key = {
+                if event.coord().0 >= 4 {
+                    event.transform(|row, col| (row - 4, col))
+                }
+                else {
+                    event.transform(|row, col| (row, 11 - col))
+                }
+            };
+
+            c.local.layout.event(physical_key);
         }
 
-        handle_event::spawn(None).unwrap();
+        if c.shared.usb_dev.lock(|d| d.state()) != UsbDeviceState::Configured {
+            return;
+        }
+
+        let report: KbHidReport = c.local.layout.keycodes().collect();
+        if !c
+            .shared
+            .usb_class
+            .lock(|k| k.device_mut().set_keyboard_report(report.clone()))
+        {
+            return;
+        }
+
+        while let Ok(0) = c.shared.usb_class.lock(|k| k.write(report.as_bytes())) {}
     }
 }

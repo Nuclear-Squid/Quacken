@@ -11,9 +11,6 @@ macro_rules! s {
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum CustomActions {
-    Underglow,
-    Bootloader,
-    Display,
 }
 
 #[rustfmt::skip]
