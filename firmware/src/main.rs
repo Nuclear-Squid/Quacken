@@ -14,6 +14,9 @@ pub static BOOT2: [u8; 256] = rp2040_boot2::BOOT_LOADER_W25Q080;
 mod app {
     use crate::layout as kb_layout;
 
+    use core::convert::Infallible;
+    use core::mem::MaybeUninit;
+
     use rp2040_hal::{
         self,
         fugit::MicrosDurationU32,
@@ -43,13 +46,25 @@ mod app {
         class_prelude::UsbBusAllocator,
         // HACK: import the UsbClass trait, but still allow to use its name for a type later
         class::UsbClass as _,
-        bus::UsbBus as _,
     };
 
     type UsbClass = keyberon::Class<'static, UsbBus, ()>;
     type UsbDevice = usb_device::device::UsbDevice<'static, UsbBus>;
 
-    const SCAN_TIME_US: u32 = 10_000;
+    trait ResultExt<T> {
+        fn get(self) -> T;
+    }
+    impl<T> ResultExt<T> for Result<T, Infallible> {
+        fn get(self) -> T {
+            match self {
+                Ok(v) => v,
+                Err(e) => match e {},
+            }
+        }
+    }
+
+    // Fun fact, keayboard is invisible to `lsusb` if scan time is set to 10_000 or above.
+    const SCAN_TIME_US: u32 = 1000;
     const EXTERNAL_XTAL_FREQ_HZ: u32 = 12_000_000u32;
 
     #[shared]
@@ -70,7 +85,7 @@ mod app {
     #[local]
     struct Local {
         matrix: Matrix<InputPin, OutputPin, 8, 6>,
-        layout: Layout<12, 4, 1, kb_layout::CustomActions>,
+        layout: Layout<8, 6, 1, ()>,
         debouncer: Debouncer<[[bool; 8]; 6]>,
         timer: Timer,
     }
@@ -126,26 +141,28 @@ mod app {
 
         watchdog.start(MicrosDurationU32::micros(10_000_u32));
 
-        let Ok(matrix) = Matrix::new(
-            [
-                pins.gpio3.into_pull_up_input().into_dyn_pin(),
-                pins.gpio4.into_pull_up_input().into_dyn_pin(),
-                pins.gpio5.into_pull_up_input().into_dyn_pin(),
-                pins.gpio9.into_pull_up_input().into_dyn_pin(),
-                pins.gpio18.into_pull_up_input().into_dyn_pin(),
-                pins.gpio19.into_pull_up_input().into_dyn_pin(),
-                pins.gpio20.into_pull_up_input().into_dyn_pin(),
-                pins.gpio10.into_pull_up_input().into_dyn_pin(),
-            ],
-            [
-                pins.gpio16.into_push_pull_output().into_dyn_pin(),
-                pins.gpio14.into_push_pull_output().into_dyn_pin(),
-                pins.gpio15.into_push_pull_output().into_dyn_pin(),
-                pins.gpio8.into_push_pull_output().into_dyn_pin(),
-                pins.gpio7.into_push_pull_output().into_dyn_pin(),
-                pins.gpio6.into_push_pull_output().into_dyn_pin(),
-            ],
-        );
+        let Ok(matrix) = cortex_m::interrupt::free(move |_cs| {
+            Matrix::new(
+                [
+                    pins.gpio3.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio4.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio5.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio9.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio18.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio19.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio20.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio10.into_pull_up_input().into_dyn_pin(),
+                ],
+                [
+                    pins.gpio16.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio14.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio15.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio8.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio7.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio6.into_push_pull_output().into_dyn_pin(),
+                ],
+            )
+        });
 
         (
             Shared {
@@ -158,7 +175,7 @@ mod app {
             Local {
                 matrix,
                 layout: Layout::new(&kb_layout::LAYERS),
-                debouncer: Debouncer::new([[false; 8]; 6], [[false; 8]; 6], 10),
+                debouncer: Debouncer::new([[false; 8]; 6], [[false; 8]; 6], 5),
                 timer,
             },
             init::Monotonics(),
@@ -183,11 +200,12 @@ mod app {
     #[task(
         binds = TIMER_IRQ_0,
         priority = 1,
-        shared = [led_pin, alarm, watchdog, usb_dev, usb_class],
         local = [matrix, layout, debouncer, timer],
+        shared = [led_pin, alarm, watchdog, usb_dev, usb_class],
     )]
     fn process_kbd_events(mut c: process_kbd_events::Context) {
         static mut LED_TURNED_ON: bool = false;
+        static mut LED_COUNTER: u32 = 100;
 
         c.shared.alarm.lock(|a| {
             a.clear_interrupt();
@@ -198,35 +216,27 @@ mod app {
 
         c.shared.watchdog.feed();
 
-        for event in c.local.debouncer.events(c.local.matrix.get().unwrap()) {
-            // Fit the 4*12 layout into the 8 * 6 matrix (Quacken Zero)
-            let physical_key = {
-                if event.coord().0 >= 4 {
-                    event.transform(|row, col| (row - 4, col))
-                }
-                else {
-                    event.transform(|row, col| (row, 11 - col))
-                }
-            };
-
-            c.local.layout.event(physical_key);
+        for event in c.local.debouncer.events(c.local.matrix.get().get()) {
+            c.local.layout.event(event);
+            // // Fit the 4*12 layout into the 8 * 6 matrix (Quacken Zero)
+            // let physical_key = {
+            //     if event.coord().0 >= 4 {
+            //         // event.transform(|row, col| (row - 4, col))
+            //         continue;
+            //     }
+            //     else {
+            //         // event.transform(|row, col| (row, 11 - col))
+            //         event
+            //     }
+            // };
+            //
+            // c.local.layout.event(physical_key);
         }
 
-        // Usb device is stuck in `Suspend` mode.
-        // if c.shared.usb_dev.lock(|d| d.state()) != UsbDeviceState::Configured {
-        if c.shared.usb_dev.lock(|d| d.state()) != UsbDeviceState::Suspend {
+        c.local.layout.tick();
+
+        if c.shared.usb_dev.lock(|d| d.state()) != UsbDeviceState::Configured {
             return;
-        }
-
-        // If we compare usb device state against `Suspend`, builtin led blinks.
-        // If we compare usb device state against `Configured`, builtin led is off.
-        unsafe {
-            if LED_TURNED_ON {
-                c.shared.led_pin.set_low().unwrap();
-            } else {
-                c.shared.led_pin.set_high().unwrap();
-            }
-            LED_TURNED_ON = !LED_TURNED_ON;
         }
 
         // No matter what we do above, this always fails
@@ -237,6 +247,21 @@ mod app {
             .lock(|k| k.device_mut().set_keyboard_report(report.clone()))
         {
             return;
+        }
+
+        unsafe {
+            if LED_COUNTER == 0 {
+                LED_COUNTER = 100;
+                if LED_TURNED_ON {
+                    c.shared.led_pin.set_low().unwrap();
+                } else {
+                    c.shared.led_pin.set_high().unwrap();
+                }
+                LED_TURNED_ON = !LED_TURNED_ON;
+            }
+            else {
+                LED_COUNTER -= 1;
+            }
         }
 
         while let Ok(0) = c.shared.usb_class.lock(|k| k.write(report.as_bytes())) {}
