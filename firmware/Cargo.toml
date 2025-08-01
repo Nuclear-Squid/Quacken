@@ -14,7 +14,7 @@ cortex-m-rt = "0.7.0"
 cortex-m-rtic = "1.0.0"
 embedded-hal = { version = "0.2.5", features=["unproven"] }
 panic-halt = "0.2.0"
-rp2040-hal = { version = "0.11", features=["rt"]}
+rp2040-hal = { version = "0.11.0", features = ["binary-info", "critical-section-impl", "rt", "defmt"] }
 rp2040-boot2 = { version = "0.3", optional = true }
 
 
