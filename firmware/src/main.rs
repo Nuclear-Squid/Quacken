@@ -70,6 +70,11 @@ mod app {
         }
     }
 
+    // Keyberon assumes the keyboard matrix rows are pull-up inputs, and the columns are outputs.
+    // Unfortunately, the Quacken Zero is mapped the other way round. Beware.
+    const MATRIX_INPUTS: usize = 8;
+    const MATRIX_OUTPUTS: usize = 6;
+
     // Fun fact: the keyboard is invisible to `lsusb`
     // if the scan time is set to 10_000 us or above.
     const SCAN_TIME_US:          u32 = 1_000;
@@ -89,9 +94,9 @@ mod app {
 
     #[local]
     struct Local {
-        matrix: Matrix<KbInputPin, KbOutputPin, 6, 8>,
+        matrix: Matrix<KbInputPin, KbOutputPin, MATRIX_INPUTS, MATRIX_OUTPUTS>,
         layout: Layout<12, 4, 1, ()>,
-        debouncer: Debouncer<[[bool; 6]; 8]>,
+        debouncer: Debouncer<[[bool; MATRIX_INPUTS]; MATRIX_OUTPUTS]>,
         timer: Timer,
     }
 
@@ -150,22 +155,22 @@ mod app {
         let Ok(matrix) = cortex_m::interrupt::free(move |_cs| {
             Matrix::new(
                 [
-                    pins.gpio6.into_pull_up_input().into_dyn_pin(),
-                    pins.gpio7.into_pull_up_input().into_dyn_pin(),
-                    pins.gpio8.into_pull_up_input().into_dyn_pin(),
-                    pins.gpio16.into_pull_up_input().into_dyn_pin(),
-                    pins.gpio14.into_pull_up_input().into_dyn_pin(),
-                    pins.gpio15.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio3.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio4.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio5.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio9.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio20.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio19.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio18.into_pull_up_input().into_dyn_pin(),
+                    pins.gpio10.into_pull_up_input().into_dyn_pin(),
                 ],
                 [
-                    pins.gpio3.into_push_pull_output().into_dyn_pin(),
-                    pins.gpio4.into_push_pull_output().into_dyn_pin(),
-                    pins.gpio5.into_push_pull_output().into_dyn_pin(),
-                    pins.gpio9.into_push_pull_output().into_dyn_pin(),
-                    pins.gpio20.into_push_pull_output().into_dyn_pin(),
-                    pins.gpio19.into_push_pull_output().into_dyn_pin(),
-                    pins.gpio18.into_push_pull_output().into_dyn_pin(),
-                    pins.gpio10.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio6.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio7.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio8.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio16.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio14.into_push_pull_output().into_dyn_pin(),
+                    pins.gpio15.into_push_pull_output().into_dyn_pin(),
                 ],
             )
         });
@@ -181,7 +186,9 @@ mod app {
             Local {
                 matrix,
                 layout: Layout::new(&kb_layout::LAYERS),
-                debouncer: Debouncer::new([[false; 6]; 8], [[false; 6]; 8], 5),
+                debouncer: Debouncer::new(
+                    [[false; MATRIX_INPUTS]; MATRIX_OUTPUTS],
+                    [[false; MATRIX_INPUTS]; MATRIX_OUTPUTS], 5),
                 timer,
             },
             init::Monotonics(),
