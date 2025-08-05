@@ -9,7 +9,7 @@ dependencies = [
  "cortex-m",
  "cortex-m-rt",
  "cortex-m-rtic",
- "embedded-hal 0.2.7",
+ "embedded-hal 1.0.0",
  "keyberon",
  "panic-halt",
  "rp2040-boot2",
