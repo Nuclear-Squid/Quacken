@@ -22,10 +22,14 @@ mod app {
 
     use core::convert::Infallible;
 
+    use cortex_m::delay::Delay;
+
     use rp2040_hal::{
         self,
+        Clock,
         clocks::init_clocks_and_plls,
         fugit::MicrosDurationU32,
+        pac::CorePeripherals,
         gpio::Pins,
         sio::Sio,
         timer::{ Alarm, Alarm0, Timer },
@@ -81,6 +85,7 @@ mod app {
         matrix: QuackenZeroMatrix,
         layout: QuackenLayout,
         debouncer: Debouncer<[[bool; kb_layout::COLS]; kb_layout::ROWS]>,
+        delay: Delay,
         timer: Timer,
     }
 
@@ -110,6 +115,9 @@ mod app {
         )
         .unwrap();
 
+        let core = unsafe { CorePeripherals::steal() };
+        let delay = Delay::new(core.SYST, clocks.system_clock.freq().to_Hz());
+
         let mut timer = Timer::new(c.device.TIMER, &mut resets, &clocks);
         let mut alarm = timer.alarm_0().unwrap();
         alarm
@@ -133,7 +141,7 @@ mod app {
 
         watchdog.start(MicrosDurationU32::micros(WATCHDOG_TIME_US));
 
-        let Ok(matrix) = QuackenZeroMatrix::new_sparkfun_promicro(pins);
+        let Ok(matrix) = QuackenZeroMatrix::new_sparkfun_rp2040(pins);
 
         (
             Shared {
@@ -150,6 +158,7 @@ mod app {
                     [[false; kb_layout::COLS]; kb_layout::ROWS],
                     5
                 ),
+                delay,
                 timer,
             },
             init::Monotonics(),
@@ -176,7 +185,7 @@ mod app {
     #[task(
         binds = TIMER_IRQ_0,
         priority = 1,
-        local = [matrix, layout, debouncer, timer],
+        local = [matrix, layout, debouncer, delay, timer],
         shared = [alarm, watchdog, usb_dev, usb_class],
     )]
     fn process_kbd_events(mut c: process_kbd_events::Context) {
@@ -189,7 +198,8 @@ mod app {
 
         c.shared.watchdog.feed();
 
-        for event in c.local.debouncer.events(c.local.matrix.get().get()) {
+        let delay_1us = || { c.local.delay.delay_us(1) };
+        for event in c.local.debouncer.events(c.local.matrix.get_with_delay(delay_1us).get()) {
             c.local.layout.event(event);
         }
 

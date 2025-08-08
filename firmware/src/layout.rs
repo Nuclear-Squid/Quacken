@@ -10,9 +10,9 @@ pub type QuackenLayout = layout::Layout<COLS, ROWS, LAYER_COUNT, ()>;
 #[rustfmt::skip]
 pub static LAYERS: layout::Layers<COLS, ROWS, LAYER_COUNT, ()> = layout::layout! {
     {
-        [  Q  Q  W  E  R  T  Y  U  I  O  P  P  ],
-        [  A  A  S  D  F  G  H  J  K  L  ;  ;  ],
-        [  Z  Z  X  C  V  B  N  M  ,  .  /  /  ],
-        [  Q  Q  W  E  R  T  Y  U  I  O  P  P  ],
+        [  Tab     Q  W  E  R  T       Y  U  I  O  P  BSpace  ],
+        [  Escape  A  S  D  F  G       H  J  K  L  ;  Enter   ],
+        [  LShift  Z  X  C  V  B       N  M  ,  .  /  RShift  ],
+        [  n n n LAlt LCtrl LGui    Enter Space Escape n n n  ],
     }
 };
