@@ -9,6 +9,8 @@ edition = "2021"
 [dependencies]
 keyberon = { git = "https://github.com/TeXitoi/keyberon" }
 usb-device = "*" # Keyberon already imports it, but we also need to use it directly
+# Using 'rtic' with the 'thumbv6' feature rather than 'cortex-m-rtic',
+# to avoid a deprecated dependency to atomic-polyfill 1.0.0.
 rtic = { version = "2.2.0", features = ["thumbv6-backend"] }
 cortex-m = "0.7.3"
 embedded-hal = "1.0"
