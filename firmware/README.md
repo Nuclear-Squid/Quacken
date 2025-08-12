@@ -11,9 +11,8 @@ To flash your keyboard, get in UF2 bootloader mode and do:
 cargo run
 ```
 
-If `elf2uf2-rs` does not work “as is” (see [this
-issue][1]), you can install a patched
-version with:
+If `elf2uf2-rs` does not work “as is” (see [this issue][1]), you can install a
+patched version with:
 
 ```bash
 cargo install --git https://github.com/StripedMonkey/elf2uf2-rs.git#c1638b9
