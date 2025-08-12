@@ -7,7 +7,7 @@ mod zero;   // QuackenZero-specific matrix scanning
 // set the panic handler
 use panic_halt as _;
 
-#[link_section = ".boot2"]
+#[unsafe(link_section = ".boot2")]
 #[used]
 pub static BOOT2: [u8; 256] = rp2040_boot2::BOOT_LOADER_W25Q080;
 
@@ -90,7 +90,7 @@ mod app {
     }
 
     #[init(local = [bus: Option<UsbBusAllocator<UsbBus>> = None])]
-    fn init(c: init::Context) -> (Shared, Local, init::Monotonics) {
+    fn init(c: init::Context) -> (Shared, Local) {
         // https://github.com/rp-rs/rp-hal/blob/main/rp2040-hal-examples/src/bin/gpio_in_out.rs
         let mut resets = c.device.RESETS;
         let sio = Sio::new(c.device.SIO);
@@ -161,7 +161,6 @@ mod app {
                 delay,
                 timer,
             },
-            init::Monotonics(),
         )
     }
 
