@@ -12,75 +12,63 @@ points:
       key:
         padding: kh
         spread:  kw
+        origin: [-0.5kw, -0.5kh]
       columns:
-        outer.key.column_net: P16
-        pinky.key:
-          stagger: 0.2kh
-          column_net: P14
+        outer:
+        pinky.key.stagger: 0.195kh
         ring.key:
           stagger: 0.6kh
-          splay: -6
-          origin: [-0.5kw, -0.5kh]
-          column_net: P15
+          splay: -9
         middle.key:
           stagger: 0.25kh
-          splay: -4
-          origin: [-0.5kw, -0.5kh]
-          column_net: P8
-        index.key:
-          stagger: -0.25kh
-          column_net: P7
-        inner.key:
-          stagger: -0.195kh
-          column_net: P6
+          splay: -6
+        index.key.stagger: -0.25kh
+        inner.key.stagger: -0.195kh
 
       rows:
         bottom:
-          padding: kh
-          row_net: P18
-          mirror.row_net: P5
         home:
-          padding: kh
-          row_net: P19
-          mirror.row_net: P4
         top:
-          padding: kh
-          row_net: P20
-          mirror.row_net: P3
 
     thumb:
       key:
         padding: kh
         spread:  kw
-        row_net: P10
-        mirror.row_net: P9
+        splay:   -16
+        origin: [-0.5kw, -0.5kh]
       anchor:
         ref: matrix_index_bottom
         shift: [0, -1.4kh]
       columns:
-        tucky.key:
-          column_net: P8
-        comfy.key:
-          spread: 1.1kw
-          splay: -15
-          origin: [-0.5kw, -0.5kh]
-          column_net: P7
-        reachy.key:
-          spread: 1.1kw
-          splay: -15
-          origin: [-0.5kw, -0.5kh]
-          column_net: P6
+        tucky.key.splay: 0
+        comfy:
+        reachy:
 
-  rotate: -10
   mirror:
     ref: matrix_index_bottom
-    distance: 5.1kw
+    distance: 5.2kw
 
 outlines:
   keys:
     - what: rectangle
       where: true
       size: [kw - 1, kh - 1]
+
+  center:
+    - what: rectangle
+      where.ref.aggregate.parts: [matrix_middle_top, thumb_reachy, mirror_thumb_reachy, mirror_matrix_middle_top]
+      size: 5
+      adjust.rotate: 45
+
+  keys_2:
+    - what: rectangle
+      where: true
+      size: 13.8
+
+  plate:
+    - name: keys_2
+    - operation: add
+      name: center
 
   electronics:
     # MCU / IO expander
@@ -91,9 +79,9 @@ outlines:
       size: 10
     # Trackpad
     - what: circle
-      where: matrix_inner_bottom
-      radius: 35 / 2
-      adjust.shift: [1.72kw, 0.1kh]
+      where.ref.aggregate.parts: [matrix_inner_bottom, mirror_matrix_inner_bottom]
+      radius: 40 / 2
+      adjust.shift: [0, -8]
 
   board:
     - what: polygon
@@ -180,39 +168,62 @@ outlines:
     - operation: subtract
       name: electronics
 
-pcbs:
-  quacken_zero:
-    outlines:
-      main:
-        outline: board
-    footprints:
-      promicro:
-        what: promicro
-        where:
-          ref.aggregate.parts: [matrix_index_bottom, mirror_matrix_index_bottom]
-          shift: [0, -3]
-          rotate: -90
+pcbs.quacken:
+  outlines.main.outline: board
+  footprints:
 
-      choc_main:
-        what: test_choc
-        where: -/inner|outer/
-        adjust.rotate: 180
-        params:
-          hummingbird: /pinky_(top|home)/
-          # XXX: Thubs are on row "default"
-          connect_below: -/top|default/
-          from: "{{column_net}}"
-          to: "{{colrow}}"
-          diode_from: "{{colrow}}"
-          diode_to: "{{row_net}}"
+    choc_main:
+      what: choc_but_better
+      where: -/inner|outer/
+      adjust.rotate: 180
+      params:
+        hotswap: false
+        hummingbird: /pinky_(top|home)/
+        from: "{{colrow}}"  # Placeholder, net is actually defined in kicad schematic
+        to: "GND"
 
-      choc_extensions:
-        what: test_choc
-        where: /inner|outer/
-        params:
-          hummingbird: /home|bottom/
-          connect_below: -/bottom/
-          from: "{{column_net}}"
-          to: "{{colrow}}"
-          diode_from: "{{colrow}}"
-          diode_to: "{{row_net}}"
+    choc_extensions:
+      what: choc_but_better
+      where: /inner|outer/
+      params:
+        hotswap: false
+        hummingbird: -/top/
+        from: "{{colrow}}"  # Placeholder, net is actually defined in kicad schematic
+        to: "GND"
+
+    # Ergogen’s trrs jack footprint is not fucking centered
+    trrs_left:
+      what: trrs
+      where: matrix_inner_top
+      adjust.shift: [15, 0]
+      params:
+        A: "I2C_SCL"
+        B: "I2C_SDA"
+        C: "+3V3"
+        D: "GND"
+
+    trrs_right:
+      what: trrs
+      where: mirror_matrix_inner_top
+      adjust.shift: [10.3, 0]
+      params:
+        A: "I2C_SCL"
+        B: "I2C_SDA"
+        C: "+3V3"
+        D: "GND"
+
+    rotaries:
+      what: rotary
+      where: /thumb_(tucky|reachy)/
+      adjust.rotate: 180
+      params:
+        from: "{{colrow}}"
+        to: "GND"
+        A: "{{colrow}}_A"
+        B: "{{colrow}}_B"
+        C: "GND"
+
+    dummy_cirque:
+      what: dummy_cirque
+      where.ref.aggregate.parts: [matrix_inner_bottom, mirror_matrix_inner_bottom]
+      adjust.shift: [0, -8]
