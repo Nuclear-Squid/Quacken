@@ -1,5 +1,4 @@
 (sym_lib_table
   (version 7)
-  (lib (name "kbd")(type "KiCad")(uri "${KIPRJMOD}/kbd.kicad_sym")(options "")(descr ""))
   (lib (name "Keyboards")(type "KiCad")(uri "${KIPRJMOD}/Keyboards.kicad_sym")(options "")(descr ""))
 )

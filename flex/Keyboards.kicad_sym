@@ -6,23 +6,25 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "MSW"
-			(at 4.318 2.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" ""
+		(property "Reference" "SW"
 			(at 0 0 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Value" "Choc Switch With Median"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 0 0 0)
 			(effects
 				(font
@@ -49,11 +51,60 @@
 				(hide yes)
 			)
 		)
-		(symbol "MedianSwitch_1_1"
+		(symbol "MedianSwitch_0_1"
 			(polyline
 				(pts
-					(xy 0 0) (xy 0.762 0.762) (xy 0 1.524) (xy -0.762 0.762) (xy 0 0)
+					(xy 2.54 1.27) (xy 3.556 1.27)
 				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 2.794 1.524) (xy 3.302 1.016)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 3.048 1.778) (xy 3.048 0.762)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 3.302 1.524) (xy 2.794 1.016)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "MedianSwitch_1_1"
+			(rectangle
+				(start -2.54 1.016)
+				(end 2.54 -1.016)
 				(stroke
 					(width 0)
 					(type solid)
@@ -63,19 +114,37 @@
 				)
 			)
 			(pin passive line
-				(at 0 0 180)
-				(length 0)
+				(at -5.08 0 0)
+				(length 2.54)
 				(name ""
 					(effects
 						(font
-							(size 0 0)
+							(size 1.27 1.27)
 						)
 					)
 				)
 				(number "1"
 					(effects
 						(font
-							(size 0 0)
+							(size 0.7 0.7)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 5.08 0 180)
+				(length 2.54)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 0.7 0.7)
 						)
 					)
 				)
@@ -774,7 +843,7 @@
 				)
 			)
 		)
-		(property "Value" ""
+		(property "Value" "Choc Switch"
 			(at 0 0 0)
 			(effects
 				(font
@@ -782,7 +851,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 0 0 0)
 			(effects
 				(font

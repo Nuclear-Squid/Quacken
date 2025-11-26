@@ -20,7 +20,7 @@ points:
           stagger: 0.6kh
           splay: -9
         middle.key:
-          stagger: 0.25kh
+          stagger: 0.35kh
           splay: -6
         index.key.stagger: -0.25kh
         inner.key.stagger: -0.195kh
@@ -169,16 +169,18 @@ outlines:
       name: electronics
 
 pcbs.quacken:
-  outlines.main.outline: board
+  # outlines.main.outline: center
   footprints:
+    board_outline:
+      what: outline
+      where.ref.aggregate.parts: [matrix_middle_top, thumb_reachy, mirror_thumb_reachy, mirror_matrix_middle_top]
 
     choc_main:
       what: choc_but_better
       where: -/inner|outer/
       adjust.rotate: 180
       params:
-        hotswap: false
-        hummingbird: /pinky_(top|home)/
+        hummingbird: /pinky_(home|bottom)/
         from: "{{colrow}}"  # Placeholder, net is actually defined in kicad schematic
         to: "GND"
 
@@ -186,16 +188,22 @@ pcbs.quacken:
       what: choc_but_better
       where: /inner|outer/
       params:
-        hotswap: false
-        hummingbird: -/top/
+        hummingbird: -/bottom/
         from: "{{colrow}}"  # Placeholder, net is actually defined in kicad schematic
         to: "GND"
+
+    usb_connector:
+      what: usb_c
+      where: matrix_pinky_top
+      adjust.shift: [8.5, 18.5]
 
     # Ergogen’s trrs jack footprint is not fucking centered
     trrs_left:
       what: trrs
-      where: matrix_inner_top
-      adjust.shift: [15, 0]
+      where: matrix_inner_bottom
+      adjust:
+        shift: [33, -15]
+        rotate: -90 + 15
       params:
         A: "I2C_SCL"
         B: "I2C_SDA"
@@ -204,8 +212,10 @@ pcbs.quacken:
 
     trrs_right:
       what: trrs
-      where: mirror_matrix_inner_top
-      adjust.shift: [10.3, 0]
+      where: mirror_matrix_inner_bottom
+      adjust:
+        shift: [31.82, -10.5]
+        rotate: -90 + 15
       params:
         A: "I2C_SCL"
         B: "I2C_SDA"
@@ -227,3 +237,10 @@ pcbs.quacken:
       what: dummy_cirque
       where.ref.aggregate.parts: [matrix_inner_bottom, mirror_matrix_inner_bottom]
       adjust.shift: [0, -8]
+
+    cirque:
+      what: cirque
+      where: /inner_bottom/
+      adjust:
+        rotate: 270 + 15
+        shift: [18, -3.5]
