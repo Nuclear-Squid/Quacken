@@ -26,4 +26,7 @@ Libre, ergonomic, *polymorphic*: a single PCB for many possible layouts.
 ## Note to time travelers
 
 This revision of the board isn’t the one presented in the screenshots above.
-The keyboard is only functional as a unibody only, not when split.
+The keyboard is NOT functional with ZMK or QMK, as the USB bus is way too unstable.
+I’ve managed to get the left half to work using `rtic` (a Rust low-level
+embedded system framework), and thus encourage using Keyberon as a firmware for
+this board if for *some reason* you own one.

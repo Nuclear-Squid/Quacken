@@ -20,9 +20,8 @@ function rotate(x, y, r) {
 }
 
 function absolute_coords(x, y, p) {
-  const new_x = x * Math.cos(-p.rot * Math.PI / 180) - y * Math.sin(-p.rot * Math.PI / 180) + p.x;
-  const new_y = x * Math.sin(-p.rot * Math.PI / 180) + y * Math.cos(-p.rot * Math.PI / 180) + p.y;
-  return `${new_x} ${new_y}`
+  const [new_x, new_y] = rotate(x, y, p.rot);
+  return `${new_x + p.x} ${new_y + p.y}`
 }
 
 function via(x, y, params) {
@@ -54,6 +53,145 @@ function arc(start_x, start_y, middle_x, middle_y, end_x, end_y, params) {
   `;
 }
 
+// Returns a custom iterator, similar to Rust’s std::slice::Windows.
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_generators
+// https://doc.rust-lang.org/std/primitive.slice.html#method.windows
+const array_windows = (arr, len) => ({
+    *[Symbol.iterator]() {
+        for (let i = 0; i <= arr.length - len; i++) {
+            yield arr.slice(i, i + len);
+        }
+    }
+});
+
+
+function normalize_to(vec2, final_len) {
+    const vec_len = Math.sqrt(Math.pow(vec2[0], 2) + Math.pow(vec2[1], 2));
+    const new_x = vec2[0] / vec_len * final_len;
+    const new_y = vec2[1] / vec_len * final_len;
+    return [new_x, new_y];
+};
+
+
+function poly_line_relative(params, corner_radius, segment_coordinates) {
+    let output = '';
+    let previous_pos = segment_coordinates[0];
+    let current_pos = segment_coordinates[0];
+    // const iter = segment_coordinates.slice(1);
+    const add_pairs = (pair1, pair2) => [pair1[0] + pair2[0], pair1[1] + pair2[1]];
+
+    // for (const [x, y, r] of iter) {
+    for (let i = 1; i < segment_coordinates.length; i++) {
+        const [x, y, r=0] = segment_coordinates[i];
+        current_pos = add_pairs(previous_pos, rotate(x, y, r ?? 0));
+
+        if (i != segment_coordinates.length - 1) {
+            const factor = 0.3;
+            const start_point = rotate(...normalize_to(segment_coordinates[i - 1], corner_radius), r + 180);
+            const mid_point = rotate(...normalize_to(segment_coordinates[i], corner_radius * factor), r + 180);
+            const end_point = rotate(...normalize_to(segment_coordinates[i], corner_radius), r + 180);
+
+            // output += arc(
+            //     ...add_pairs(current_pos, start_point),
+            //     ...add_pairs(current_pos, mid_point),
+            //     ...add_pairs(current_pos, end_point),
+            //     params,
+            // );
+
+            // output += segment(
+            //     ...add_pairs(current_pos, start_point),
+            //     ...add_pairs(current_pos, end_point),
+            //     params,
+            // );
+
+            // output += arc(
+            //     start_point[0],
+            //     start_point[1],
+            //     mid_point[0],
+            //     mid_point[1],
+            //     end_point[0],
+            //     end_point[1],
+            //     params
+            // );
+
+        }
+
+        output += segment(
+            previous_pos[0],
+            previous_pos[1],
+            current_pos[0],
+            current_pos[1],
+            params
+        );
+
+        previous_pos = current_pos;
+    }
+
+    return output;
+}
+
+
+function parallel_bus(offset, index, max_index, segment_coordinates) {
+    const angle_between_vec = (vec1, vec2) => {
+        const angle_1 = Math.atan2(...vec1) * 180 / Math.PI;
+        const angle_2 = Math.atan2(...vec2) * 180 / Math.PI;
+
+        let angle = angle_2 - angle_1
+        if (angle >  180) angle -= 180;
+        if (angle < -180) angle += 180;
+
+        return angle;
+    };
+
+    let was_clockwise_rotation = angle_between_vec([-1, 0], segment_coordinates[1]) >= 0;
+    let cummulated_x_offset = 0;
+    let cummulated_y_offset = 0;
+    let output = [segment_coordinates[0]];
+
+    for (let i = 1; i < segment_coordinates.length - 1; i++) {
+        let [x, y, r=0] = segment_coordinates[i];
+
+        const next_rotation = segment_coordinates[i+1][2] ?? 0;
+        const is_clockwise_rotation = next_rotation + angle_between_vec(segment_coordinates[i], segment_coordinates[i+1]) > 0;
+
+        let [x_offset, y_offset] = is_clockwise_rotation == was_clockwise_rotation
+            ? normalize_to([x, y], offset * index)
+            : rotate(...normalize_to([x, y], offset * index), 180);
+
+        let extra_x_offset = 0;
+        let extra_y_offset = 0;
+        if (next_rotation != 0) {
+            if (segment_coordinates[i+1][0] == 0) {
+                // * 1.05 to fix rounding errosr
+                extra_x_offset = x_offset * Math.sin(Math.abs(next_rotation) * Math.PI / 180) * 1.05;
+            }
+        }
+
+        if (Math.sign(cummulated_x_offset * x_offset) == -1) {
+            x_offset *= 2;
+        }
+        else if (Math.sign(cummulated_x_offset * x_offset) == 1) {
+            x_offset = 0;
+        }
+
+        if (Math.sign(cummulated_y_offset * y_offset) == -1) {
+            y_offset *= 2;
+        }
+        else if (Math.sign(cummulated_y_offset * y_offset) == 1) {
+            y_offset = 0;
+        }
+
+        x_offset += extra_x_offset
+        y_offset += extra_y_offset
+
+        cummulated_x_offset += x_offset;
+        cummulated_y_offset += y_offset;
+        output.push([x + x_offset, y + y_offset, r]);
+    }
+
+    output.push(segment_coordinates[segment_coordinates.length - 1]);
+    return output;
+}
 
 function oval_hole(num, x, y, rot, net) {
     return `
@@ -71,151 +209,148 @@ function oval_hole(num, x, y, rot, net) {
 }
 
 
-function _switch_body(p) {
-    const pins_std = `
-        ${oval_hole(1, 5, -3.8, p.rot, p.from)}
-        ${oval_hole(2, 0, -5.9, p.rot, p.to)}
-    `;
+function column_track(p) {
+    const key_name_contains = s => p.from.name.match(s);
 
-    return `(module PG1350 (layer F.Cu) (tedit 5DD50112)
-        ${p.at /* parametric position */}
+    // Ignore thumb keys
+    if (key_name_contains('default')) return '';
 
-        ${'' /* Just drill the holes, do not assign component for BOM or PCBA */ }
-        (attr through_hole board_only exclude_from_pos_files exclude_from_bom dnp)
+    const track_width = 0.2;
+    const track_clearence = 0.2;
 
-        ${'' /* footprint reference */}
-        (fp_text reference "${p.ref.replace('S', 'SW')}" (at 0 0) (layer F.SilkS) ${p.ref_hide} (effects (font (size 1.27 1.27) (thickness 0.15))))
-        (fp_text value "" (at 0 0) (layer F.SilkS) hide (effects (font (size 1.27 1.27) (thickness 0.15))))
+    const is_upside_down = Math.abs(p.rot) > 90;
 
-        ${''/* middle shaft */}
-        (pad "" np_thru_hole circle (at 0 0) (size 3.429 3.429) (drill 3.429) (layers *.Cu *.Mask))
-
-        ${''/* stabilizers */}
-        (pad "" np_thru_hole circle (at 5.5 0) (size 1.7018 1.7018) (drill 1.7018) (layers *.Cu *.Mask))
-        (pad "" np_thru_hole circle (at -5.5 0) (size 1.7018 1.7018) (drill 1.7018) (layers *.Cu *.Mask))
-
-        ${'' /* keycap */}
-        (fp_rect (start -9 -8.5) (end 9 8.5) (stroke (width 0.15) (type solid)) (fill no) (layer "Dwgs.User"))
-
-        ${'' /* base switch marker */}
-        (fp_rect (start -7 -7) (end 7 7) (stroke (width 0.15) (type solid)) (fill no) (layer "F.SilkS"))
-        (fp_line (start -5.5 0) (end 5.5 0) (stroke (width 0.2) (type solid)) (layer "F.SilkS"))
-        (fp_line (start 0 0) (end 0 -5.95) (stroke (width 0.2) (type solid)) (layer "F.SilkS"))
-
-        ${'' /* Include signal pins only if there’s no hotswap */}
-        ${p.hotswap ? '' : pins_std}
-    )`;
-}
-
-
-function median_position(p) {
-    // const unrotated_params = Object.assign(p, { rot: p.rot % 180 });
-    const track_params = Math.abs(p.rot) < 90 ? p : {
+    const track_params = !is_upside_down ? p : {
         x: p.x,
-        y: p.y - 5,
+        y: p.y,
         r: p.r + 180,
         rot: p.rot + 180,
     };
 
-    return `(module MedianPosition (layer F.Cu) (tedit 5DD50112)
-        ${p.at /* parametric position */}
+    const key_height = 17;
+    const median_height = 12.8;
+    const height_index = [/bottom/, /home/, /top/].findIndex(row => p.from.name.match(row));
+    const extra_height = is_upside_down ? 6 : 14
+    const col_height = key_height * height_index + extra_height
 
-        (fp_text reference "${p.ref.replace('S', 'SM')}" (at 0 0) (layer F.SilkS) ${p.ref_hide} (effects (font (size 1.27 1.27) (thickness 0.15))))
+    const per_key_params = (() => {
+        if (is_upside_down)
+            return {
+                start_x: -5,
+                start_y: 3.8,
+                end_y: col_height
+            };
+        if (p.hummingbird)
+            return {
+                start_x: -5,
+                start_y: -3.8 + median_height,
+                end_y: col_height - median_height
+            };
+        return {
+            start_x: 5,
+            start_y: -3.8,
+            end_y: col_height
+        };
+    })();
 
-        ${'' /* pin hole */ }
-        ${oval_hole(1, -5, 9.0, p.rot, p.from)}
+    const per_column_params = (() => {
+        // mirror certains parts on the right hand
+        const right_hand = key_name_contains('mirror');
+        const sign = right_hand ? -1 : 1;
+        if (key_name_contains('inner'))
+            return {
+                x_to_mcu: right_hand ? 37.8 : -22,
+                angle_to_mcu: 5 * sign,
+                height_offset: -1,
+            };
+        if (key_name_contains('index'))
+            return {
+                x_to_mcu: right_hand
+                    ? (22.325 - (track_width + track_clearence) * 3)
+                    : (-4.15 - (track_width + track_clearence) * 3),
+                angle_to_mcu: 5 * sign,
+                height_offset: 1.5,
+            };
+        if (key_name_contains('middle'))
+            return {
+                x_to_mcu: right_hand ? 7 : 10,
+                angle_to_mcu: 5 * sign,
+                height_offset: 2,
+            };
+        if (key_name_contains('ring'))
+            return {
+                x_to_mcu: right_hand ? -9.3 : 27.3 - (track_width + track_clearence) * 3,
+                angle_to_mcu: -1 * sign,
+                height_offset: 1,
+            };
+        if (key_name_contains('pinky'))
+            return {
+                x_to_mcu: 7.5 * sign,
+                angle_to_mcu: -10 * sign,
+                end: right_hand
+                    ? [[-3, 0], [-10, 0,  10]]
+                    : [[10, 0], [ 10, 0, -10]],
+            };
+        if (key_name_contains('outer'))
+            return {
+                start_x_offset: right_hand ? 2.2 : 0,
+                x_to_mcu: 7.5 * sign,
+                angle_to_mcu: -10 * sign,
+                height_offset: right_hand ? -2.5 : 1.5,
+                end: right_hand
+                    ? [[-18, 0], [-10, 0,  10]]
+                    : [
+                        [9.8, 0],
+                        [ 0,-4],
+                        [17.2, 0],
+                        [10, 0, -10]
+                    ],
+            };
+    })();
 
-        ${''/* middle shaft (hummingbird) */}
-        (pad "" np_thru_hole circle (at 0 5.2) (size 3.429 3.429) (drill 3.429) (layers *.Cu *.Mask))
+    const track = Object.assign(per_key_params, per_column_params);
 
-        ${''/* stabilizers (hummingbird) */}
-        (pad "" np_thru_hole circle (at  5.5 5.2) (size 1.7018 1.7018) (drill 1.7018) (layers *.Cu *.Mask))
-        (pad "" np_thru_hole circle (at -5.5 5.2) (size 1.7018 1.7018) (drill 1.7018) (layers *.Cu *.Mask))
-    )`
-        // Auto route extra pad 1 to std pad 1
-        + segment(-5, 9, 0, 9, track_params)
-        + arc(0, 9, 2.275, 8, 3.1818, 6, track_params)
-        + segment(3.1818, 6, 3.1818, -1.9818, track_params)
-        + arc(3.1818, -1.9818, 4, -3.5, 5, -3.8, track_params)
-    ;
+    let full_track = [
+        [track.start_x, track.start_y],
+        [-7.5 - track.start_x - (track.start_x_offset ?? 0), 0],
+        [ 0, track.end_y + (track.height_offset ?? 0)],
+        [track.x_to_mcu, 0],
+    ].concat(track.end ?? [[0, 7, track.angle_to_mcu]]);
+
+    return poly_line_relative(
+        track_params,
+        1.5,
+        parallel_bus((track_width + track_clearence), height_index, 2, full_track)
+    );
 }
 
 
-function column_track(p) {
-    // Ignore thumb keys
-    if (p.from.name.match(/default/)) return '';
+function update_reference(p) {
+    const reference_number = parseInt(p.ref.replace(p.designator, ''));
+    const reference_translation_table = [
+        6, 5, 4,
+        9, 8, 7,
+        12, 11, 10,
+        15, 14, 13,
+        21, 20, 19,
+        25, 26, 27,
+        28, 29, 30,
+        31, 32, 33,
+        34, 35, 36,
+        40, 41, 42,
+        3, 2, 1,
+        18, 17, 16,
+        22, 23, 24,
+        37, 38, 39,
+    ];
 
-    const track_width = 0.2;
-    const track_clearence = 0.15;
-
-    const height = [/bottom/, /home/, /top/].findIndex(row => p.from.name.match(row));
-    // const start_x = 7;
-    // const [start_x, start_y] = Math.abs(p.rot) < 90 ? [5, -3.8] : [-5, 3.8];
-
-    const x_offset = (track_width + track_clearence) * height;
-    const length = height * 17 + 10
-    let start_y_arc = -3.8
-    // const start_y_vertical = -3.8 - 1.4 - x_offset;
-    let [start_x_arc, start_x_vertical, start_y_vertical, end_y_vertical] = Math.abs(p.rot) < 90
-        ? [-6, -8.3 + (track_width + track_clearence) * (2 - height), -3.8 + 1.4 + x_offset,  length - 1.13]
-        : [ 6,  7.6 + (track_width + track_clearence) * height,       -3.8 - 1.4 - x_offset, -length - 1.13]
-    ;
-
-    if (Math.abs(p.rot) < 90 && p.hummingbird) {
-        start_y_arc      += 12.8;
-        start_y_vertical += 12.8;
-    }
-
-    let sign = 1;
-
-    if ([/ring/, /pinky/, /inner/].find(col => p.from.name.match(col))) {
-        sign *= -1;
-    }
-
-    if (p.from.name.match(/mirror/)) {
-        sign *= -1;
-    }
-
-    end_y_vertical += x_offset * sign;
-
-    const columns = [/inner/, /index/, /middle/, /ring/, /pinky/, /outer/];
-    const x_to_mcu = p.from.name.match(/mirror/)
-        ? [35, 18, 5, 5, 15, 32]
-        : [29, 12, 5, 5, 15, 32]
-    ;
-
-    const y_offset = p.from.name.match(/mirror/)
-        ? [1, -1, -1, 3, 1, -1]
-        : [1, -1, -3, 2, 1, -1]
-    ;
-
-    const col_index = columns.findIndex(col => p.from.name.match(col));
-
-    const end_x_mcu = start_x_vertical +  x_to_mcu[col_index] * sign;
-    end_y_vertical += y_offset[col_index];
-
-    const arc_size = 1.5;
-    const y_sign = Math.abs(p.rot) < 90 ? 1 : -1;
-    const x_sign = -sign;
-
-    // If I return the EXACT SAME FUCKING EXPRESSION directily instead of
-    // storing it in this useless fucking variable, it evaluates as `undefined`.
-    // What the actual fuck.
-    const test =
-        (Math.abs(p.rot) < 90 && !p.hummingbird ? segment(start_x_arc, start_y_arc, 5, start_y_arc, p) : '')
-        + arc(start_x_arc, start_y_arc, start_x_arc + 0.4, start_y_arc - 0.00, start_x_vertical, start_y_vertical, p)
-        + segment(start_x_vertical, start_y_vertical, start_x_vertical, end_y_vertical - arc_size * y_sign, p)
-        + arc(start_x_vertical, end_y_vertical - arc_size * y_sign, start_x_vertical - 0.5 * x_sign, end_y_vertical - 0.4 * y_sign, start_x_vertical - arc_size * x_sign, end_y_vertical, p)
-        + segment(start_x_vertical - arc_size * x_sign, end_y_vertical, end_x_mcu, end_y_vertical, p)
-    ;
-
-    return test;
+    p.ref = p.designator + reference_translation_table[reference_number - 1];
 }
 
 
 module.exports = {
     params: {
-        designator: 'S',
+        designator: 'SW',
         keycaps: false,
         hummingbird: '',
         from: undefined,
@@ -223,6 +358,8 @@ module.exports = {
     },
 
     body: p => {
+        update_reference(p);
+
         if (typeof p.hummingbird !== 'boolean') {
             if (p.hummingbird[0] === '/') {
                 p.hummingbird = (new RegExp(p.hummingbird.slice(1, p.hummingbird.length - 1))).test(p.from.name);
@@ -275,7 +412,7 @@ module.exports = {
             (attr through_hole board_only exclude_from_pos_files exclude_from_bom dnp)
 
             ${'' /* footprint reference */}
-            (fp_text reference "${p.ref.replace('S', 'SW')}" (at 0 0) (layer F.SilkS) ${p.ref_hide} (effects (font (size 1.27 1.27) (thickness 0.15))))
+            (fp_text reference "${p.ref}" (at 0 0) (layer F.SilkS) ${p.ref_hide} (effects (font (size 1.27 1.27) (thickness 0.15))))
             (fp_text value "" (at 0 0) (layer F.SilkS) hide (effects (font (size 1.27 1.27) (thickness 0.15))))
 
             ${''/* middle shaft */}

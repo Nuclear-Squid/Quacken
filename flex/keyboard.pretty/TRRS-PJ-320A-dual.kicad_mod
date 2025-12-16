@@ -6,6 +6,7 @@
 	(property "Reference" "TRRS1"
 		(at 0 14.2 15)
 		(layer "Dwgs.User")
+		(hide yes)
 		(uuid "a258195d-46f4-4ef0-8609-5d63ff204f38")
 		(effects
 			(font
@@ -17,6 +18,7 @@
 	(property "Value" "TRRS-PJ-320A-dual"
 		(at 0 -5.6 15)
 		(layer "F.Fab")
+		(hide yes)
 		(uuid "4bced830-4b7a-40c0-b2ff-54825221db33")
 		(effects
 			(font
@@ -135,14 +137,6 @@
 		(uuid "1b77dbeb-5c8f-4e5c-8677-6cb392070752")
 	)
 	(pad "R1" thru_hole oval
-		(at 0 10.2)
-		(size 1.6 2.2)
-		(drill oval 0.9 1.5)
-		(layers "*.Cu" "*.Mask")
-		(remove_unused_layers no)
-		(uuid "9c71b678-02a7-42c7-9271-d3e40ca8e4ed")
-	)
-	(pad "R2" thru_hole oval
 		(at 0 6.2)
 		(size 1.6 2.2)
 		(drill oval 0.9 1.5)
@@ -150,7 +144,7 @@
 		(remove_unused_layers no)
 		(uuid "3985c7e6-c056-41fd-9678-f48f0a9792bf")
 	)
-	(pad "S" thru_hole oval
+	(pad "R2" thru_hole oval
 		(at 0 3.2)
 		(size 1.6 2.2)
 		(drill oval 0.9 1.5)
@@ -158,13 +152,21 @@
 		(remove_unused_layers no)
 		(uuid "3406531f-ce9a-460a-a7d8-f4e80d41cb1b")
 	)
-	(pad "T" thru_hole oval
+	(pad "S" thru_hole oval
 		(at -4.6 11.3)
 		(size 1.6 2.2)
 		(drill oval 0.9 1.5)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(uuid "97eef740-c149-4232-ad32-1f4e75f838ec")
+	)
+	(pad "T" thru_hole oval
+		(at 0 10.2)
+		(size 1.6 2.2)
+		(drill oval 0.9 1.5)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "9c71b678-02a7-42c7-9271-d3e40ca8e4ed")
 	)
 	(embedded_fonts no)
 )
