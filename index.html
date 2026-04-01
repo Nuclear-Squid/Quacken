@@ -6,9 +6,16 @@
   <title>Quacken</title>
 
   <style>
+    html {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     body {
       margin: 1em auto;
       max-width: 64em;
+      width: 100%;
       text-align: center;
       font-family: sans-serif;
     }
@@ -24,20 +31,14 @@
     }
 
     /* keyboard geometry (XXX magic numbers) */
-    #left  { transform: translate(22px, -5px) rotate( 10deg); }
-    #right { transform: translate(884px, 5px) rotate(-10deg); }
-    #outline { transform: translate(-194px, -242px) scale(3.34); }
+    #left    { transform: translate(-12px, 45px); }
+    #right   { transform: translate(908px, 45px); }
+    #outline { transform: translate(478px, 191px) scale(3.338, -3.338); }
 
-    #left  .matrix { transform-origin: 0px 56px; }
-    #right .matrix { transform-origin: 70px 56px; }
-    /* .thumb { transform-origin: left; } */
-
-    #left .comfy,
-    #left .reachy { transform: translate(81px, 1px) rotate(15deg); }
-    #left .tucked { transform: translate(294px, 163px) rotate(10deg); }
-    #right .comfy,
-    #right .reachy { transform: translate(-79px, 18px) rotate(-15deg); }
-    #right .tucked { transform: translate(-294px, 174px) rotate(-10deg); }
+    #left  .matrix { transform-origin:  0px   56px; }
+    #left  .thumb  { transform-origin: -14px -62px; }
+    #right .matrix { transform-origin:  70px  56px; }
+    #right .thumb  { transform-origin:  74px -62px; }
 
     /* color theme */
     :root {
@@ -45,8 +46,7 @@
     }
     rect {
       fill: #fff;
-      stroke: #666;
-      stroke-width: .5px;
+      stroke: #999;
     }
     text {
       fill: #444;
@@ -57,147 +57,78 @@
     .dualKey {
       fill: #ddd;
     }
-    #board {
+    #board use,
+    #board path {
       fill:   #7889a2;
       stroke: #7889a280;
+      fill:   #78a289;
+      stroke: #78a28980;
+      fill:   rgba(130, 156, 175, 0.60);
+      stroke: rgba(130, 156, 175, 0.20);
       stroke-width: 1.0px;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-    #keys {
-      stroke: navy;
-      stroke-width: 0.5px;
-      stroke-dasharray: 1 2;
-    }
     @media (prefers-color-scheme: dark) {
       /* TODO */
     }
+
+    .col1 rect,
+    .col2 rect,
+    .col3 rect,
+    .col4 rect,
+    .col5 rect,
+    .col6 rect {
+      stroke-width: 0.6px !important;
+    }
   </style>
 
-  <script>// keyboard geometry -- could be hard-coded in the stylesheet
-    const columns = [ "outer", "pinky", "ring", "middle", "index", "inner" ];
-    const thumbs = [ "tucked", "comfy", "reachy" ]; // TODO
-    const rows = [ "top", "home", "bottom" ];
-
-    // Ergogen values, relative to one another, from outer/pinky to inner/index
-    const rel_stagger = [ 0, 0.2, 0.6, 0.25, -0.25, -0.195 ];
-    const rel_splay = [ 0, 0, 6, 4, 0, 0 ];
-
-    // median keys have an additional stagger
-    const alt_stagger = [ 0.305, 0.695, 0.0, 0.0, 0.0, 0.305 ];
-
-    // choc spacing = 18*17mm, scaled to stay close to x-keyboard's 60*60px
-    const kw = 60.0;
-    const kh = 56.67;
-
-    // apply geometry
-    let sheet = window.document.styleSheets[0];
-    const addTransform = (selector, transform) => {
-      sheet.insertRule(`${selector} { transform: ${transform} }`);
-    }
-    columns.forEach((name, i) => {
-      const splay = rel_splay[i] * Math.PI / 180.0;
-      const cos = Math.cos(splay);
-      const sin = Math.sin(splay);
-      const tx = kw * (1 + sin * 2);
-      const ty = kh * rel_stagger[i];
-      addTransform(`#left  .${name}`, `matrix(${cos}, ${sin}, ${-sin}, ${cos}, ${tx}, ${-ty})`);
-      addTransform(`#right .${name}`, `matrix(${cos}, ${-sin}, ${sin}, ${cos}, ${-tx}, ${-ty})`);
-      addTransform(`.col${6 - i}m`,   `translateY(${alt_stagger[i] * kh}px)`);
-    });
-    rows.forEach((name, i) => {
-      addTransform(`.${name}`, `translateY(${i * kh}px)`);
-    });
-  </script>
-
-  <script>// keyboard configuration
-    const birds = {
-      // hummingbird-like, 32-34 keyx
-      "bluethroat":  ".col1, .col5m, .col6m, .col6",                      // gorgebleue
-      "swift":       ".col1, .col5m, .col5 .bottom, .col6, .col6m .home", // martinet
-      "oscine":      ".col1, .col5m, .col5 .bottom, .col6, .col6m",       // pinson
-      "swallow":     ".col1, .col5, .col6m, .col6 .top, .col6 .bottom",   // hirondelle
-      "kingfisher":  ".col1, .col5, .col6m, .col6",                       // martin-pecheur
-      // classic, 36-42 keyx
-      "hoopoe":      ".col1m, .col5m, .col6, .col6m",                     // huppe
-      "sparrowhawk": ".col1m, .col5m, .col6, .col6m .top",                // epervier
-      "owl":         ".col1m, .col5m, .col6",                             // chouette
-      "crow":        ".col1m, .col5m, .col6m",                            // corbeau
-    };
-    sheet.insertRule(`${birds["owl"]} { display: none }`, 0);
-    const setConfig = (name) => {
-      sheet.deleteRule(0);
-      sheet.insertRule(`${birds[name]} { display: none }`, 0);
-    };
-  </script>
 </head>
 <body>
   <h1>Quacken</h1>
   <p>Libre. Ergonomic. Polymorphic.</p>
-  <select onchange="setConfig(this.value)">
-    <option value="crow">Corbeau</option>
-    <option value="owl">Chouette</option>
-    <option value="sparrowhawk">Épervier</option>
-    <option value="hoopoe">Huppe</option>
+  <select onchange="setConfig(this.value.toLowerCase())">
+    <option>Crow</option>         <!-- Corbeau  -->
+    <option>Owl</option>          <!-- Chouette -->
+    <option>Sparrowhawk</option>  <!-- Épervier -->
+    <option>Hoopoe</option>       <!-- Huppe    -->
     <!-- 34 keys -->
-    <option value="bluethroat">Gorgebleue</option>
-    <option value="swift">Martinet</option>
-    <option value="swallow">Hirondelle</option>
+    <option>Bluethroat</option>   <!-- Gorgebleue -->
+    <option>Swift</option>        <!-- Martinet   -->
+    <option>Swallow</option>      <!-- Hirondelle -->
     <!-- 32 keys -->
-    <option value="kingfisher">Martin-pêcheur</option>
-    <option value="oscine">Pinson</option>
+    <option>Kingfisher</option>   <!-- Martin-pêcheur -->
+    <option>Finch</option>        <!-- Pinson         -->
   </select>
 
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -25 940 500">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="38 -12 880 380">
     <g id="outline">
-      <path id="board"
-        d="M202.5044,90.8471
-           C140.9044,53.5471 94.8044,67.1471 83.6412,71.2564
-           C83.6412,71.2564 80.3085,72.5178 79.8817 75.2507
-           L71.7680 124.9104
-           A1.8 1.8 0.0 0 0 73.2281,126.9956
-           C107.7473,132.4522 121.1562,136.9421 136.5319 142.7535
-           A1.8 1.8 0.0 0 1 137.6077 145.0605
-           L135.5413 150.7749
-           A1.8 1.8 0.0 0 0 136.6171,153.0819
-           C160.0803,161.4340 167.3012,166.5870 182.2492 184.4651
-           A1.8 1.8 0.0 0 0 184.7851 184.6870
-           L200.9015 171.1650
-           A2.2627 2.2627 0.0 0 1 204.1088 171.1650
-           L220.2237 184.6870
-           A1.8 1.8 0.0 0 0 222.7596,184.4651
-           C237.7076,166.5870 244.9285,161.4340 268.3916 153.0820
-           A1.8 1.8 0.0 0 0 269.4675 150.7749
-           L267.4053 145.0590
-           A1.8 1.8 0.0 0 1 268.4769,142.7535
-           C283.8526,136.9421 297.2615,132.4522 331.7807 126.9956
-           A1.8 1.8 0.0 0 0 333.2408 124.9104
-           L325.1271,75.2507
-           C324.7003,72.5178 321.3676,71.2564 321.3676,71.2564
-           C310.2044,67.1471 264.1044,53.5471 202.5044,90.8471"/>
-      <path id="keys" d="m292.56 110.43 17.73-3.12M295.51 127.17l-2.95-16.74M310.29 107.3l2.95 16.75M313.24 124.05l-17.73 3.12M76.48 107.53l2.95-16.74M79.43 90.79l17.73 3.12M94.2 110.65l-17.72-3.12M97.16 93.91l-2.96 16.74M91.84 124.05l2.95-16.74M94.8 107.3l17.72 3.13M109.57 127.17l-17.73-3.12M112.52 110.43l-2.95 16.74M116.03 100.79l4.68-16.35M120.71 84.44l17.3 4.97M133.33 105.75l-17.3-4.96M138.01 89.4l-4.68 16.35M172.68 105.48l5.82-15.98M178.5 89.5l16.91 6.16M189.6 111.63l-16.92-6.15M195.41 95.66l-5.81 15.97M245.22 140.7l16.91-6.16M251.03 156.67l-5.81-15.97M262.13 134.54l5.81 15.98M267.94 150.52l-16.91 6.15M304.97 77.17l17.73-3.13M307.92 93.91l-2.95-16.74M322.7 74.04l2.95 16.75M325.65 90.79l-17.73 3.12M231.26 102.36l16.92-6.16M237.08 118.34l-5.82-15.98M248.18 96.2l5.81 15.98M253.99 112.18l-16.91 6.16M252.54 108.19l16.91-6.16M258.35 124.16l-5.81-15.97M269.45 102.03l5.82 15.97M275.27 118l-16.92 6.16M120.71 84.44l4.69-16.34M125.4 68.1l17.3 4.96M138.01 89.4l-17.3-4.96M142.7 73.06l-4.69 16.35M237.08 118.34l16.91-6.16M242.89 134.31l-5.81-15.97M253.99 112.18l5.81 15.97M259.8 128.15l-16.91 6.16M79.43 90.79l2.95-16.75M82.38 74.04l17.73 3.13M97.16 93.91 79.43 90.8M100.1 77.17l-2.94 16.74M166.87 121.45l5.81-15.97M172.68 105.48l16.92 6.15M183.78 127.6l-16.91-6.15M189.6 111.63l-5.82 15.98M137.14 150.52l5.81-15.98M142.95 134.54l16.91 6.16M154.05 156.67l-16.91-6.15M159.86 140.7l-5.81 15.97M289.6 93.69l17.73-3.13M292.56 110.43 289.6 93.7M307.33 90.56l2.96 16.75M310.29 107.3l-17.73 3.13M271.75 105.75l17.3-4.96M276.44 122.09l-4.69-16.34M289.05 100.79l4.69 16.34M293.74 117.13l-17.3 4.96M215.48 111.63l16.91-6.15M221.3 127.6l-5.82-15.97M232.4 105.48l5.8 15.97M238.2 121.45l-16.9 6.16M240.9 76.24l16.92-6.16M246.72 92.21l-5.81-15.97M257.82 70.08l5.82 15.97M263.64 86.05l-16.92 6.16M224.84 153.69l14.75-10.33M234.6 167.61l-9.76-13.92M239.59 143.36l9.75 13.93M249.34 157.29l-14.75 10.32M141.44 86.05l5.82-15.97M147.26 70.08l16.91 6.16M158.36 92.21l-16.92-6.16M164.17 76.24l-5.81 15.97M73.53 124.27l2.95-16.74M76.48 107.53l17.72 3.12M91.25 127.4l-17.72-3.13M94.2 110.65l-2.95 16.75M171.96 168.65l13.02-10.93M183.53 182.44l-11.57-13.8M184.98 157.72l11.57 13.79M196.55 171.5l-13.02 10.94M155.74 157.29l9.75-13.93M165.5 143.36l14.74 10.33M170.49 167.61l-14.75-10.32M180.24 153.69l-9.75 13.92M156.9 96.2l5.82-15.97M162.72 80.23l16.91 6.16M173.82 102.36 156.9 96.2M179.63 86.39l-5.81 15.97M94.8 107.3l2.95-16.74M97.75 90.56l17.72 3.13M112.52 110.43l-17.73-3.12M115.47 93.69l-2.95 16.74M246.72 92.21l16.92-6.16M252.54 108.19l-5.82-15.98M263.64 86.05l5.81 15.98M269.45 102.03l-16.91 6.16M129.81 118l5.82-15.97M135.63 102.03l16.91 6.16M146.73 124.16 129.8 118M152.54 108.19l-5.81 15.97M307.92 93.91l17.73-3.12M310.88 110.65l-2.96-16.74M325.65 90.79l2.95 16.74M328.6 107.53l-17.72 3.12M225.45 86.39l16.91-6.16M231.26 102.36l-5.81-15.97M242.36 80.23l5.82 15.97M248.18 96.2l-16.92 6.16M145.28 128.15l5.81-15.97M151.09 112.18l16.91 6.16M162.19 134.31l-16.91-6.16M168 118.34l-5.81 15.97M161.06 137.43l5.81-15.98M166.87 121.45l16.91 6.16M177.97 143.58l-16.91-6.15M183.78 127.6l-5.8 15.98M286.65 76.95l17.73-3.13M289.6 93.69l-2.95-16.74M304.38 73.82l2.95 16.74M307.33 90.56l-17.72 3.13M208.53 171.5l11.57-13.78M220.1 157.72l13.02 10.93M221.55 182.44l-13.02-10.93M233.12 168.65l-11.57 13.79M221.3 127.6l16.9-6.15M227.1 143.58l-5.8-15.97M238.2 121.45l5.82 15.98M244.02 137.43l-16.91 6.15M111.34 117.13l4.69-16.34M116.03 100.79l17.3 4.96M128.64 122.09l-17.3-4.96M133.33 105.75l-4.69 16.34M209.67 95.66l16.91-6.16M215.48 111.63l-5.81-15.97M226.58 89.5l5.81 15.98M232.4 105.48l-16.92 6.15M262.38 73.06l17.3-4.96M267.06 89.4l-4.68-16.34M279.68 68.1l4.69 16.34M284.37 84.44l-17.3 4.97M267.06 89.4l17.3-4.96M271.75 105.75l-4.69-16.34M284.37 84.44l4.68 16.35M289.05 100.79l-17.3 4.96M310.88 110.65l17.72-3.12M313.83 127.4l-2.95-16.75M328.6 107.53l2.95 16.74M331.55 124.27l-17.72 3.13M135.63 102.03l5.81-15.98M141.44 86.05l16.92 6.16M152.54 108.19l-16.91-6.16M158.36 92.21l-5.82 15.98M151.09 112.18l5.81-15.98M156.9 96.2l16.92 6.16M168 118.34l-16.91-6.16M173.82 102.36 168 118.34M97.75 90.56l2.95-16.74M100.7 73.82l17.73 3.13M115.47 93.69l-17.72-3.13M118.43 76.95l-2.96 16.74"/>
+      <g id="board">
+        <path id="flex-half" d="m0 42 q-51 28-131 10 v-68 q86 0 112 -35 l19 15z"/>
+        <use href="#flex-half" transform="scale(-1 1)"/>
+      </g>
     </g>
     <g id="left">
       <g class="outer matrix">
-        <g class="col6m">
-          <g class="key top"/>
-          <g class="key home"/>
-        </g>
         <g class="col6">
           <g class="key top"/>
           <g class="key home"/>
           <g class="key bottom"/>
         </g>
+        <g class="col6m">
+          <g class="key top"/>
+          <g class="key home"/>
+        </g>
 
         <g class="pinky matrix">
-          <g class="col5m">
-            <g class="key top"/>
-            <g class="key home"/>
-          </g>
           <g class="col5">
             <g class="key top"/>
             <g class="key home"/>
             <g class="key bottom"/>
+          </g>
+          <g class="col5m">
+            <g class="key top"/>
+            <g class="key home"/>
           </g>
 
           <g class="ring matrix">
@@ -221,6 +152,18 @@
                   <g class="key bottom"/>
                 </g>
 
+                <g class="thumbCluster">
+                  <g class="tucked thumb">
+                    <g class="key"/>
+                    <g class="comfy thumb">
+                      <g class="key"/>
+                      <g class="reachy thumb">
+                        <g class="key"/>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+
                 <g class="inner matrix">
                   <g class="col1">
                     <g class="key top"/>
@@ -234,16 +177,6 @@
                 </g>
               </g>
             </g>
-          </g>
-        </g>
-      </g>
-
-      <g class="tucked thumb">
-        <g class="key"/>
-        <g class="comfy thumb">
-          <g class="key"/>
-          <g class="reachy thumb">
-            <g class="key"/>
           </g>
         </g>
       </g>
@@ -251,25 +184,25 @@
 
     <g id="right">
       <g class="outer matrix">
-        <g class="col6m">
-          <g class="key top"/>
-          <g class="key home"/>
-        </g>
         <g class="col6">
           <g class="key top"/>
           <g class="key home"/>
           <g class="key bottom"/>
         </g>
+        <g class="col6m">
+          <g class="key top"/>
+          <g class="key home"/>
+        </g>
 
         <g class="pinky matrix">
-          <g class="col5m">
-            <g class="key top"/>
-            <g class="key home"/>
-          </g>
           <g class="col5">
             <g class="key top"/>
             <g class="key home"/>
             <g class="key bottom"/>
+          </g>
+          <g class="col5m">
+            <g class="key top"/>
+            <g class="key home"/>
           </g>
 
           <g class="ring matrix">
@@ -293,6 +226,18 @@
                   <g class="key bottom"/>
                 </g>
 
+                <g class="thumbCluster">
+                  <g class="tucked thumb">
+                    <g class="key"/>
+                    <g class="comfy thumb">
+                      <g class="key"/>
+                      <g class="reachy thumb">
+                        <g class="key"/>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+
                 <g class="inner matrix">
                   <g class="col1">
                     <g class="key top"/>
@@ -309,18 +254,96 @@
           </g>
         </g>
       </g>
-
-      <g class="tucked thumb">
-        <g class="key"/>
-        <g class="comfy thumb">
-          <g class="key"/>
-          <g class="reachy thumb">
-            <g class="key"/>
-          </g>
-        </g>
-      </g>
     </g>
   </svg>
+
+  <script>// keyboard geometry -- could be hard-coded in the stylesheet
+    const columns = [ "outer", "pinky", "ring", "middle", "index", "inner" ];
+    const thumbs = [ "tucked", "comfy", "reachy" ];
+    const rows = [ "top", "home", "bottom" ];
+
+    // Ergogen values, relative to one another, from outer/pinky to inner/index
+    const col_stagger = [ 0, 0.195, 0.600, 0.350, -0.250, -0.195 ];
+    const alt_stagger = [ 0.305, 0.695, 0.0, 0.0, 0.0, 0.305 ]; // median keys
+    const col_splay = [ 0, 0, 9, 6, 0, 0 ];
+    const thumb_stagger = [ -3.4, 0, 0 ];
+    const thumb_spread = [ -1, 0, 0 ];
+    const thumb_splay = [ 0, 16, 16 ];
+
+    // choc spacing = 18*17mm, scaled to stay close to x-keyboard's 60*60px
+    const kw = 60.0;
+    const kh = 56.67;
+
+    // apply geometry
+    let sheet = window.document.styleSheets[0];
+    const cssTransform = (selector, transform) => {
+      sheet.insertRule(`${selector} { transform: ${transform} }`);
+    }
+    const svgTransform = (selector, transform) => {
+      document.querySelectorAll(selector).forEach(element => {
+        element.setAttribute("transform", transform);
+      });
+    }
+
+    const matrix = (dx, dy, angle) => {
+      const rad = angle * Math.PI / 180.0;
+      const cos = Math.cos(rad);
+      const sin = Math.sin(rad);
+      const tx = kw * (dx + sin * 2);
+      const ty = kh * dy;
+      return [
+        `matrix(${cos}, ${sin}, ${-sin}, ${cos}, ${tx}, ${-ty})`,
+        `matrix(${cos}, ${-sin}, ${sin}, ${cos}, ${-tx}, ${-ty})`
+      ];
+    }
+
+    columns.forEach((name, i) => {
+      const [left, right] = matrix(1, col_stagger[i], col_splay[i]);
+      svgTransform(`#left  .${name}`, left);
+      svgTransform(`#right .${name}`, right);
+      svgTransform(`.col${6 - i}m`, `translate(0 ${alt_stagger[i] * kh})`);
+    });
+    rows.forEach((name, i) => { // XXX ends up with a lot of unused rules
+      cssTransform(`.${name}`, `translateY(${i * kh}px)`);
+    });
+
+    const leftThumb  = document.querySelector("#left  .thumbCluster");
+    const rightThumb = document.querySelector("#right .thumbCluster");
+    leftThumb.setAttribute("x", -kw);
+    leftThumb.setAttribute("y", 3 * kh);
+    rightThumb.setAttribute("x", kw);
+    rightThumb.setAttribute("y", 3 * kh);
+    thumbs.forEach((name, i) => {
+      const [left, right] = matrix(1 + thumb_spread[i], thumb_stagger[i], thumb_splay[i]);
+      svgTransform(`#left  .thumbCluster .${name}`, left);
+      svgTransform(`#right .thumbCluster .${name}`, right);
+    });
+  </script>
+
+  <script>// keyboard configuration
+    const birds = {
+      // hummingbird-like, 32-34 keyx
+      bluethroat:  [ ".col1", ".col5m", ".col6m", ".col6",                        ], // gorgebleue
+      swift:       [ ".col1", ".col5m", ".col5 .bottom", ".col6", ".col6m .home", ], // martinet
+      finch:       [ ".col1", ".col5m", ".col5 .bottom", ".col6", ".col6m",       ], // pinson
+      swallow:     [ ".col1", ".col5", ".col6m", ".col6 .top", ".col6 .bottom",   ], // hirondelle
+      kingfisher:  [ ".col1", ".col5", ".col6m", ".col6",                         ], // martin-pecheur
+      // classic", [ "36-42 keyx
+      hoopoe:      [ ".col1m", ".col5m", ".col6", ".col6m",      ], // huppe
+      sparrowhawk: [ ".col1m", ".col5m", ".col6", ".col6m .top", ], // epervier
+      owl:         [ ".col1m", ".col5m", ".col6",                ], // chouette
+      crow:        [ ".col1m", ".col5m", ".col6m",               ], // corbeau
+    };
+    const showBird = (name) => {
+      const selector = birds[name].map(sel => `${sel} rect`).join(", ");
+      sheet.insertRule(`${selector} { fill: none; stroke-width: 0; }`, 0);
+    };
+    showBird("owl");
+    const setConfig = (name) => {
+      sheet.deleteRule(0);
+      showBird(name);
+    };
+  </script>
 
   <script>// keyboard layout
     document.querySelectorAll(".matrix .key").forEach(key => {
