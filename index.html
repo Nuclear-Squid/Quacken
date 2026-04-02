@@ -88,7 +88,7 @@
   <h1>Quacken</h1>
   <p>Libre. Ergonomic. Polymorphic.</p>
   <select onchange="setConfig(this.value.toLowerCase())">
-    <option>Crow</option>         <!-- Corbeau  -->
+    <option>Raven</option>        <!-- Corbeau  -->
     <option>Owl</option>          <!-- Chouette -->
     <option>Sparrowhawk</option>  <!-- Épervier -->
     <option>Hoopoe</option>       <!-- Huppe    -->
@@ -332,7 +332,7 @@
       hoopoe:      [ ".col1m", ".col5m", ".col6", ".col6m",      ], // huppe
       sparrowhawk: [ ".col1m", ".col5m", ".col6", ".col6m .top", ], // epervier
       owl:         [ ".col1m", ".col5m", ".col6",                ], // chouette
-      crow:        [ ".col1m", ".col5m", ".col6m",               ], // corbeau
+      raven:       [ ".col1m", ".col5m", ".col6m",               ], // corbeau
     };
     const showBird = (name) => {
       const selector = birds[name].map(sel => `${sel} rect`).join(", ");
