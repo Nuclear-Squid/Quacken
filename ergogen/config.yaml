@@ -195,14 +195,20 @@ pcbs.quacken:
     usb_connector:
       what: usb_c
       where: matrix_pinky_top
-      adjust.shift: [8.5, 18.5]
+      adjust.shift: [8.5, 15.3]
+
+    qwiic:
+      what: qwiic
+      where: mirror_matrix_pinky_top
+      adjust.shift: [8.5, 15.3]
+      adjust.rotate: 180
 
     # Ergogen’s trrs jack footprint is not fucking centered
     trrs_left:
       what: trrs
       where: matrix_inner_bottom
       adjust:
-        shift: [33, -15]
+        shift: [32.2, -13]
         rotate: -90 + 15
       params:
         A: "I2C_SCL"
@@ -214,7 +220,7 @@ pcbs.quacken:
       what: trrs
       where: mirror_matrix_inner_bottom
       adjust:
-        shift: [31.82, -10.5]
+        shift: [31.0, -8.55]
         rotate: -90 + 15
       params:
         A: "I2C_SCL"
