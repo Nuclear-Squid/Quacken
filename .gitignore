@@ -30,10 +30,13 @@
 *.kicad_pcb-bak
 *.kicad_sch-bak
 *-backups
-*.kicad_prl
-*.sch-bak
+*-cache*
+*-bak
+*-bak*
 *~
+~*
 _autosave-*
+\#auto_saved_files\#
 *.tmp
 *-save.pro
 *-save.kicad_pcb
@@ -50,7 +53,13 @@ fp-info-cache
 
 # Exported BOM files
 *.xml
-# *.csv
+*.csv
 
 # Archived Backups (KiCad 6.0)
 **/*-backups/*.zip
+
+# Local git-based history (KiCad 9.0+)
+.history
+
+# Local project settings
+*.kicad_prl

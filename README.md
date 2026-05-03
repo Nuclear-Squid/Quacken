@@ -22,3 +22,8 @@ Libre, ergonomic, *polymorphic*: a single PCB for many possible layouts.
   - [x] optional rotary encoders
 
 - [ ] **Marie-Quackenette**: split and wireless variant of the Quacken Flex.
+
+## Note to time travelers
+
+This revision of the board isn’t the one presented in the screenshots above.
+The keyboard is only functional as a unibody only, not when split.

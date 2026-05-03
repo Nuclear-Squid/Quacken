@@ -2211,23 +2211,25 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "MSW"
-				(at 4.318 2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" ""
+			(property "Reference" "SW"
 				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
-			(property "Footprint" ""
+			(property "Value" "Choc Switch With Median"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Footprint" "keyboard:Choc_Switch_Median"
 				(at 0 0 0)
 				(effects
 					(font
@@ -2254,11 +2256,60 @@
 					(hide yes)
 				)
 			)
-			(symbol "MedianSwitch_1_1"
+			(symbol "MedianSwitch_0_1"
 				(polyline
 					(pts
-						(xy 0 0) (xy 0.762 0.762) (xy 0 1.524) (xy -0.762 0.762) (xy 0 0)
+						(xy 2.54 1.27) (xy 3.556 1.27)
 					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.794 1.524) (xy 3.302 1.016)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.048 1.778) (xy 3.048 0.762)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.302 1.524) (xy 2.794 1.016)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "MedianSwitch_1_1"
+				(rectangle
+					(start -2.54 1.016)
+					(end 2.54 -1.016)
 					(stroke
 						(width 0)
 						(type solid)
@@ -2268,19 +2319,37 @@
 					)
 				)
 				(pin passive line
-					(at 0 0 180)
-					(length 0)
+					(at -5.08 0 0)
+					(length 2.54)
 					(name ""
 						(effects
 							(font
-								(size 0 0)
+								(size 1.27 1.27)
 							)
 						)
 					)
 					(number "1"
 						(effects
 							(font
-								(size 0 0)
+								(size 0.7 0.7)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 2.54)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 0.7 0.7)
 							)
 						)
 					)
@@ -2979,7 +3048,7 @@
 					)
 				)
 			)
-			(property "Value" ""
+			(property "Value" "Choc Switch"
 				(at 0 0 0)
 				(effects
 					(font
@@ -2987,7 +3056,7 @@
 					)
 				)
 			)
-			(property "Footprint" ""
+			(property "Footprint" "keyboard:Choc_Switch"
 				(at 0 0 0)
 				(effects
 					(font
@@ -6069,7 +6138,7 @@
 	)
 	(text "ESD\n"
 		(exclude_from_sim no)
-		(at 250.952 58.42 0)
+		(at 253.492 49.53 0)
 		(effects
 			(font
 				(size 3.175 3.175)
@@ -6173,18 +6242,6 @@
 		(uuid "03c24043-534a-4b13-b7a1-02d2f943211a")
 	)
 	(junction
-		(at 200.66 140.97)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "0c3a7609-c5e3-4c12-ab26-a5b6e77c6407")
-	)
-	(junction
-		(at 200.66 143.51)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "12be61a1-f857-4404-8603-b55f71894de1")
-	)
-	(junction
 		(at 236.22 102.87)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6233,12 +6290,6 @@
 		(uuid "274d851e-9e53-49ed-8fe4-78bc8cb90039")
 	)
 	(junction
-		(at 100.33 69.85)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "289d4c5b-5c0d-483a-95a7-c74dbde16bb3")
-	)
-	(junction
 		(at 246.38 148.59)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6249,12 +6300,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "30f09dcd-960d-4559-ab64-acf42c9cb675")
-	)
-	(junction
-		(at 100.33 110.49)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3c91f230-e42a-486c-828b-7f3bb6d514c4")
 	)
 	(junction
 		(at 110.49 100.33)
@@ -6273,12 +6318,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "428a3e8f-5242-42ff-ab04-846d53b8f736")
-	)
-	(junction
-		(at 200.66 146.05)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "439adaba-d557-443f-a0ef-04f9f6a4f3ad")
 	)
 	(junction
 		(at 236.22 143.51)
@@ -6305,12 +6344,6 @@
 		(uuid "541c697b-86f7-4b60-b83f-3b02e304ffa8")
 	)
 	(junction
-		(at 100.33 72.39)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "589ccf1b-847b-42eb-a75a-b9d761a4d1f8")
-	)
-	(junction
 		(at 229.87 31.75)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6327,12 +6360,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "59e97e03-d93f-4225-b7a3-95f41b7e6225")
-	)
-	(junction
-		(at 100.33 100.33)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "5a21cb37-7927-411a-bc6a-e298c4bd0b56")
 	)
 	(junction
 		(at 85.09 40.64)
@@ -6381,12 +6408,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "7488b073-665c-43d6-8724-3fd141146887")
-	)
-	(junction
-		(at 236.22 138.43)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "7923324b-7748-4366-a937-6316f04f8dfb")
 	)
 	(junction
 		(at 243.84 39.37)
@@ -6473,6 +6494,12 @@
 		(uuid "953cc949-b244-455a-9e40-853ee7881fad")
 	)
 	(junction
+		(at 246.38 128.27)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9aa64c6f-4e4a-452d-94b0-43ca4d8bf99d")
+	)
+	(junction
 		(at 110.49 74.93)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6489,12 +6516,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a03d45a1-01ab-4d25-8228-d2c48827b876")
-	)
-	(junction
-		(at 200.66 148.59)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "a4e3b13e-4ccc-43fa-a3cc-3d398512793b")
 	)
 	(junction
 		(at 246.38 140.97)
@@ -6525,12 +6546,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "ba25a849-0ad1-4dcb-b052-b5a605f7c922")
-	)
-	(junction
-		(at 100.33 97.79)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "bb976d48-9cd5-4853-bc77-d39e7827a6ff")
 	)
 	(junction
 		(at 243.84 105.41)
@@ -6617,12 +6632,6 @@
 		(uuid "d721a53d-0d89-4d64-8b43-34325ab1dc52")
 	)
 	(junction
-		(at 100.33 107.95)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "d7572f4b-530f-4de3-934d-0a975895e43b")
-	)
-	(junction
 		(at 223.52 39.37)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6665,12 +6674,6 @@
 		(uuid "e2a4a6f1-0f4f-4645-8cbe-447690afda6c")
 	)
 	(junction
-		(at 236.22 140.97)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f17c34b8-9b35-431c-ad32-e7d1a81ec5b6")
-	)
-	(junction
 		(at 190.5 148.59)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6681,12 +6684,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f4b01979-629a-49cf-9129-24a40a266e9a")
-	)
-	(junction
-		(at 246.38 128.27)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f538841b-eb7c-4d3e-a302-5c7b2d6532f5")
 	)
 	(junction
 		(at 140.97 27.94)
@@ -7163,6 +7160,16 @@
 			(type default)
 		)
 		(uuid "3a252ee4-75a1-4700-9176-e9730ea24aaa")
+	)
+	(wire
+		(pts
+			(xy 246.38 128.27) (xy 246.38 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3b9f605d-4976-4318-a0e3-82d64187ba27")
 	)
 	(wire
 		(pts
@@ -8216,16 +8223,6 @@
 	)
 	(wire
 		(pts
-			(xy 246.38 128.27) (xy 246.38 133.35)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e70aec79-0f7b-443e-a5d6-619cadc2dc5d")
-	)
-	(wire
-		(pts
 			(xy 85.09 40.64) (xy 82.55 40.64)
 		)
 		(stroke
@@ -8565,7 +8562,7 @@
 		(uuid "58762e69-4db1-4bf7-ba46-60dfd9c7fa8d")
 	)
 	(label "D+"
-		(at 252.73 86.36 0)
+		(at 255.27 77.47 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8594,6 +8591,16 @@
 		)
 		(uuid "5efaa668-9bea-4335-9aa4-990de0cf04a7")
 	)
+	(label "I2C0_SDA"
+		(at 261.62 82.55 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "62286a5a-6ad0-4e61-bc71-e6e70f61e10d")
+	)
 	(label "rotary_right_b"
 		(at 269.24 161.29 0)
 		(effects
@@ -8615,7 +8622,7 @@
 		(uuid "69202c2f-f401-4c22-8178-28dd7c37ae09")
 	)
 	(label "D+"
-		(at 252.73 60.96 0)
+		(at 255.27 52.07 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8664,6 +8671,16 @@
 		)
 		(uuid "83beb64c-2bd4-4432-ace9-a6342f30b91b")
 	)
+	(label "I2C0_SCL"
+		(at 266.7 107.95 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "8d45c450-49a7-4181-ba25-b3fc72a674ce")
+	)
 	(label "I2C1_SCL"
 		(at 100.33 125.73 0)
 		(effects
@@ -8673,6 +8690,16 @@
 			(justify left bottom)
 		)
 		(uuid "9687bf1b-2fe3-4410-8764-3f16f84b6e56")
+	)
+	(label "I2C0_SDA"
+		(at 261.62 107.95 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "9b591531-fbbd-48a9-86e2-dd24186e5c3e")
 	)
 	(label "I2C0_SCL"
 		(at 193.04 120.65 0)
@@ -8735,7 +8762,7 @@
 		(uuid "b33d8b2e-7943-48a5-9cd1-2eec2484e376")
 	)
 	(label "D-"
-		(at 257.81 86.36 0)
+		(at 260.35 77.47 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8773,6 +8800,16 @@
 			(justify left bottom)
 		)
 		(uuid "c8d578ff-d227-43cd-a435-895369e27b3d")
+	)
+	(label "I2C0_SCL"
+		(at 266.7 82.55 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "d50632b0-ce4e-4266-84f7-fcf3a24db8c8")
 	)
 	(label "QSPI_SD2"
 		(at 50.8 177.8 180)
@@ -8855,7 +8892,7 @@
 		(uuid "fa385b8f-c5fd-4f1f-90a4-0f3af223b596")
 	)
 	(label "D-"
-		(at 257.81 60.96 0)
+		(at 260.35 52.07 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -9034,7 +9071,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "22k"
+		(property "Value" "4.7k"
 			(at 191.77 118.11 90)
 			(effects
 				(font
@@ -9118,7 +9155,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 118.11 0)
 			(effects
 				(font
@@ -9161,7 +9198,95 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Power_Protection:SRV05-4")
+		(at 264.16 95.25 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "0db5efb9-272f-4518-8f5c-fb6b376d1318")
+		(property "Reference" "U6"
+			(at 281.686 94.234 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SRV05-4"
+			(at 281.686 96.774 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+			(at 252.73 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.onsemi.com/pub/Collateral/SRV05-4-D.PDF"
+			(at 264.16 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "ESD Protection Diodes with Low Clamping Voltage, SOT-23-6"
+			(at 264.16 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C2836319"
+			(at 264.16 95.25 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ae098fac-f929-4785-a656-92298503fc8b")
+		)
+		(pin "6"
+			(uuid "6923f373-dc84-4fd9-8e5a-3f16d0d8ae46")
+		)
+		(pin "3"
+			(uuid "5c87acc7-3e1b-441a-b55e-3600ce102442")
+		)
+		(pin "5"
+			(uuid "1944b8ec-ce84-4906-8786-e3131654ec94")
+		)
+		(pin "2"
+			(uuid "83a40049-8a2e-4208-9c80-0d69ff8b95b6")
+		)
+		(pin "4"
+			(uuid "8bc18f83-a2dc-46d7-a55d-d21981c29399")
+		)
+		(instances
+			(project "quacken"
+				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
+					(reference "U6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Keyboards:MedianSwitch")
 		(at 195.58 148.59 0)
 		(mirror y)
 		(unit 1)
@@ -9186,7 +9311,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 195.58 148.59 0)
 			(effects
 				(font
@@ -9254,7 +9379,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 195.58 151.13 0)
 			(effects
 				(font
@@ -9465,7 +9590,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 143.51 0)
 			(effects
 				(font
@@ -9508,9 +9633,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 105.41 100.33 0)
-		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9526,14 +9650,14 @@
 			)
 		)
 		(property "Value" "~"
-			(at 105.41 102.87 0)
+			(at 105.41 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 105.41 100.33 0)
 			(effects
 				(font
@@ -9594,7 +9718,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "22k"
+		(property "Value" "4.7k"
 			(at 198.12 128.27 90)
 			(effects
 				(font
@@ -9679,7 +9803,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 64.77 0)
 			(effects
 				(font
@@ -9722,9 +9846,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 105.41 97.79 0)
-		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9740,14 +9863,14 @@
 			)
 		)
 		(property "Value" "~"
-			(at 105.41 100.33 0)
+			(at 105.41 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 105.41 97.79 0)
 			(effects
 				(font
@@ -9923,72 +10046,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 100.33 72.39 0)
-		(mirror x)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "1f85cedf-94c2-4de3-bd4f-4c8b2064b55f")
-		(property "Reference" "MS5"
-			(at 101.6 74.168 0)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.5 0.5)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 100.33 74.93 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 100.33 72.39 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 100.33 72.39 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 100.33 72.39 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "cca70b2c-09c7-41ac-864a-e06ea098f1a0")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Keyboards:Switch")
 		(at 241.3 120.65 0)
 		(unit 1)
@@ -10013,7 +10070,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 120.65 0)
 			(effects
 				(font
@@ -10255,138 +10312,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+5V")
-		(at 267.97 73.66 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "2278a48f-ec06-4946-8d30-739909797297")
-		(property "Reference" "#PWR03"
-			(at 267.97 77.47 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+5V"
-			(at 267.97 68.58 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 267.97 73.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 267.97 73.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 267.97 73.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "1c26cf7b-4691-41a4-ac48-35918eb145b3")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "#PWR03")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 100.33 97.79 0)
-		(mirror x)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "2b46a29d-9067-4237-a830-3e93996514bf")
-		(property "Reference" "MS4"
-			(at 101.6 99.568 0)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.5 0.5)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 100.33 100.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 100.33 97.79 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 100.33 97.79 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 100.33 97.79 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "8672c346-22b7-4643-833b-74c3ec934be0")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Keyboards:Switch")
 		(at 195.58 138.43 0)
 		(mirror y)
@@ -10412,7 +10337,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 195.58 138.43 0)
 			(effects
 				(font
@@ -10455,9 +10380,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 105.41 110.49 0)
-		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10473,14 +10397,14 @@
 			)
 		)
 		(property "Value" "~"
-			(at 105.41 113.03 0)
+			(at 105.41 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 105.41 110.49 0)
 			(effects
 				(font
@@ -10523,33 +10447,34 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 236.22 138.43 0)
+		(lib_id "power:+3V3")
+		(at 276.86 95.25 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "2e0a9067-c100-4146-9719-01271675c379")
-		(property "Reference" "MS12"
-			(at 237.49 136.652 0)
-			(do_not_autoplace yes)
+		(fields_autoplaced yes)
+		(uuid "31834bdd-fb21-4dee-9f97-be51ff2a8b3b")
+		(property "Reference" "#PWR053"
+			(at 276.86 99.06 0)
 			(effects
 				(font
-					(size 0.5 0.5)
+					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
-		(property "Value" "~"
-			(at 236.22 135.89 0)
+		(property "Value" "+3V3"
+			(at 276.86 90.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 236.22 138.43 0)
+		(property "Footprint" ""
+			(at 276.86 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10558,7 +10483,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 236.22 138.43 0)
+			(at 276.86 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10566,8 +10491,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
-			(at 236.22 138.43 0)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 276.86 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10576,12 +10501,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "5f1302e9-7139-4d23-b4c2-4e6ab858dbe6")
+			(uuid "21af2300-5138-4a34-b541-da81279347ea")
 		)
 		(instances
 			(project "quacken"
 				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS12")
+					(reference "#PWR053")
 					(unit 1)
 				)
 			)
@@ -10648,217 +10573,6 @@
 			(project "quacken"
 				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
 					(reference "#PWR014")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 200.66 106.68 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "334ac1b3-4efe-4ed0-80c4-bc9276cc541b")
-		(property "Reference" "R11"
-			(at 202.946 107.696 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "22k"
-			(at 200.66 107.95 90)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 202.438 106.68 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 200.66 106.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 200.66 106.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "JLCPCB Part #" "C25768"
-			(at 200.66 106.68 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "31a479ef-1303-44b2-9485-d3c061668d71")
-		)
-		(pin "2"
-			(uuid "3d5acce8-7ef3-4870-8675-62ded6e0341c")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "R11")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 100.33 110.49 0)
-		(mirror x)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "33c149dd-9d0f-402b-811b-602f238c0ef8")
-		(property "Reference" "MS1"
-			(at 101.6 112.268 0)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.5 0.5)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 100.33 113.03 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 100.33 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 100.33 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 100.33 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "890a03dc-84f0-4cbc-a9a9-bc4aecb85588")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Keyboards:Switch")
-		(at 241.3 128.27 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "34349b76-03de-4197-b0c9-1f393fa220ee")
-		(property "Reference" "SW35"
-			(at 241.3 128.27 0)
-			(effects
-				(font
-					(size 1.2 1.2)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 241.3 125.73 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:PG1350"
-			(at 241.3 128.27 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 241.3 128.27 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 241.3 128.27 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "9a0879fa-8ae2-42ed-a5c3-d57546a485a9")
-		)
-		(pin "1"
-			(uuid "02f1e6f8-8ac9-425e-8585-4bd3061b0b90")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "SW35")
 					(unit 1)
 				)
 			)
@@ -10934,7 +10648,6 @@
 	(symbol
 		(lib_id "Keyboards:Switch")
 		(at 105.41 102.87 0)
-		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10950,14 +10663,14 @@
 			)
 		)
 		(property "Value" "~"
-			(at 105.41 105.41 0)
+			(at 105.41 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 102.87 0)
 			(effects
 				(font
@@ -11272,7 +10985,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 195.58 146.05 0)
 		(mirror y)
 		(unit 1)
@@ -11297,7 +11010,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 195.58 146.05 0)
 			(effects
 				(font
@@ -11499,7 +11212,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 92.71 0)
 			(effects
 				(font
@@ -11566,7 +11279,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 135.89 0)
 			(effects
 				(font
@@ -11951,7 +11664,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 77.47 0)
 			(effects
 				(font
@@ -12084,7 +11797,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 148.59 0)
 			(effects
 				(font
@@ -12283,7 +11996,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 82.55 0)
 			(effects
 				(font
@@ -12326,9 +12039,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 105.41 72.39 0)
-		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12344,14 +12056,14 @@
 			)
 		)
 		(property "Value" "~"
-			(at 105.41 74.93 0)
+			(at 105.41 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 105.41 72.39 0)
 			(effects
 				(font
@@ -12476,7 +12188,7 @@
 	)
 	(symbol
 		(lib_id "power:+3V3")
-		(at 200.66 102.87 0)
+		(at 200.66 110.49 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12484,7 +12196,7 @@
 		(dnp no)
 		(uuid "61a94c7e-8264-40d6-a9db-792554a3ed9b")
 		(property "Reference" "#PWR036"
-			(at 200.66 106.68 0)
+			(at 200.66 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12493,7 +12205,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 200.152 98.552 0)
+			(at 200.152 106.172 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12501,7 +12213,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 200.66 102.87 0)
+			(at 200.66 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12510,7 +12222,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 200.66 102.87 0)
+			(at 200.66 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12519,7 +12231,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 200.66 102.87 0)
+			(at 200.66 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12729,7 +12441,7 @@
 	)
 	(symbol
 		(lib_id "Power_Protection:SRV05-4")
-		(at 255.27 73.66 270)
+		(at 257.81 64.77 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12737,7 +12449,7 @@
 		(dnp no)
 		(uuid "648ee70d-d702-494d-a014-a395306a6949")
 		(property "Reference" "U5"
-			(at 272.796 72.644 90)
+			(at 275.336 63.754 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12745,7 +12457,7 @@
 			)
 		)
 		(property "Value" "SRV05-4"
-			(at 272.796 75.184 90)
+			(at 275.336 66.294 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12753,7 +12465,7 @@
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
-			(at 243.84 91.44 0)
+			(at 246.38 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12762,7 +12474,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.onsemi.com/pub/Collateral/SRV05-4-D.PDF"
-			(at 255.27 73.66 0)
+			(at 257.81 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12771,7 +12483,7 @@
 			)
 		)
 		(property "Description" "ESD Protection Diodes with Low Clamping Voltage, SOT-23-6"
-			(at 255.27 73.66 0)
+			(at 257.81 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12780,7 +12492,7 @@
 			)
 		)
 		(property "JLCPCB Part #" "C2836319"
-			(at 255.27 73.66 90)
+			(at 257.81 64.77 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12816,72 +12528,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 200.66 143.51 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "665d3091-ec47-4df7-a487-e0647e62b633")
-		(property "Reference" "MS7"
-			(at 199.39 141.732 0)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.5 0.5)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 200.66 140.97 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 200.66 143.51 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 200.66 143.51 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 200.66 143.51 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "9c41ce91-ac3b-46a6-b512-b61af987d70d")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Keyboards:Switch")
 		(at 105.41 62.23 0)
 		(mirror x)
@@ -12907,7 +12553,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 62.23 0)
 			(effects
 				(font
@@ -13151,7 +12797,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 195.58 140.97 0)
 		(mirror y)
 		(unit 1)
@@ -13176,7 +12822,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 195.58 140.97 0)
 			(effects
 				(font
@@ -13213,6 +12859,72 @@
 			(project "quacken"
 				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
 					(reference "SW23")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 270.51 64.77 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6b77d8b5-34ed-41e2-8ce7-71934de6c2a8")
+		(property "Reference" "#PWR03"
+			(at 270.51 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 270.51 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 270.51 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 270.51 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 270.51 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "55c902e4-037e-4bd5-8508-5878a034463b")
+		)
+		(instances
+			(project "quacken"
+				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
+					(reference "#PWR03")
 					(unit 1)
 				)
 			)
@@ -13511,7 +13223,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 74.93 0)
 			(effects
 				(font
@@ -13711,7 +13423,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 85.09 0)
 			(effects
 				(font
@@ -13754,72 +13466,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 100.33 107.95 0)
-		(mirror x)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7bfe62dd-a354-4555-bce1-53fc223a047a")
-		(property "Reference" "MS2"
-			(at 101.6 109.728 0)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.5 0.5)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 100.33 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 100.33 107.95 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 100.33 107.95 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 100.33 107.95 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "b1bdf0f3-d29a-47c5-854a-505783201571")
-		)
-		(instances
-			(project ""
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Keyboards:Switch")
 		(at 105.41 90.17 0)
 		(mirror x)
@@ -13845,7 +13491,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 90.17 0)
 			(effects
 				(font
@@ -14010,7 +13656,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 113.03 0)
 			(effects
 				(font
@@ -14413,7 +14059,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 133.35 0)
 			(effects
 				(font
@@ -14458,7 +14104,6 @@
 	(symbol
 		(lib_id "Keyboards:Switch")
 		(at 105.41 67.31 0)
-		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -14474,14 +14119,14 @@
 			)
 		)
 		(property "Value" "~"
-			(at 105.41 69.85 0)
+			(at 105.41 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 67.31 0)
 			(effects
 				(font
@@ -14617,7 +14262,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 59.69 0)
 			(effects
 				(font
@@ -14858,34 +14503,32 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 100.33 100.33 0)
-		(mirror x)
+		(lib_id "Keyboards:Switch")
+		(at 241.3 128.27 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "97664974-fa20-41c4-96cc-b7e64fc6b6de")
-		(property "Reference" "MS3"
-			(at 101.6 102.108 0)
-			(do_not_autoplace yes)
+		(uuid "978c526b-a578-47ae-947a-572556e51e01")
+		(property "Reference" "SW35"
+			(at 241.3 128.27 0)
 			(effects
 				(font
-					(size 0.5 0.5)
+					(size 1.2 1.2)
 				)
 			)
 		)
 		(property "Value" "~"
-			(at 100.33 102.87 0)
+			(at 241.3 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 100.33 100.33 0)
+		(property "Footprint" "keyboard:Choc_Switch"
+			(at 241.3 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14894,7 +14537,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 100.33 100.33 0)
+			(at 241.3 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14903,7 +14546,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 100.33 100.33 0)
+			(at 241.3 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14911,13 +14554,16 @@
 				(hide yes)
 			)
 		)
+		(pin "2"
+			(uuid "35a2a8f8-667d-4bf2-ac72-9d6b0ed15733")
+		)
 		(pin "1"
-			(uuid "85f9de4f-bd91-4532-8205-0bd62dbbe8a1")
+			(uuid "3b77d250-4bc1-4b53-878d-9e8ef43b4313")
 		)
 		(instances
 			(project "quacken"
 				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS3")
+					(reference "SW35")
 					(unit 1)
 				)
 			)
@@ -14992,72 +14638,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 200.66 146.05 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "9ae68fb3-4632-47c5-83a2-8a7dbfaf40bf")
-		(property "Reference" "MS10"
-			(at 199.39 144.272 0)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.5 0.5)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 200.66 143.51 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 200.66 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 200.66 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 200.66 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "bf290891-2ebe-4609-8532-ddbd12135767")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS10")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R")
 		(at 198.12 111.76 0)
 		(unit 1)
@@ -15075,7 +14655,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "22k"
+		(property "Value" "4.7k"
 			(at 198.12 113.03 90)
 			(effects
 				(font
@@ -15201,7 +14781,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 241.3 138.43 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -15225,7 +14805,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 241.3 138.43 0)
 			(effects
 				(font
@@ -15401,74 +14981,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 200.66 140.97 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "a82b561a-feb8-417b-bdb7-5a9d2100f33e")
-		(property "Reference" "MS8"
-			(at 199.39 139.192 0)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.5 0.5)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 200.66 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 200.66 140.97 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 200.66 140.97 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 200.66 140.97 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6911470b-e5b3-4925-9953-f3f39d56fdf6")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
-		(at 242.57 73.66 0)
+		(at 245.11 64.77 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -15477,7 +14991,7 @@
 		(fields_autoplaced yes)
 		(uuid "ab2f9049-6107-4433-b234-98d19c06d147")
 		(property "Reference" "#PWR043"
-			(at 242.57 80.01 0)
+			(at 245.11 71.12 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15486,7 +15000,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 242.57 78.74 0)
+			(at 245.11 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15494,7 +15008,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 242.57 73.66 0)
+			(at 245.11 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15503,7 +15017,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 242.57 73.66 0)
+			(at 245.11 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15512,7 +15026,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 242.57 73.66 0)
+			(at 245.11 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15955,7 +15469,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 80.01 0)
 			(effects
 				(font
@@ -16022,7 +15536,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 125.73 0)
 			(effects
 				(font
@@ -16200,7 +15714,6 @@
 	(symbol
 		(lib_id "Keyboards:Switch")
 		(at 105.41 105.41 0)
-		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -16216,14 +15729,14 @@
 			)
 		)
 		(property "Value" "~"
-			(at 105.41 107.95 0)
+			(at 105.41 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 105.41 0)
 			(effects
 				(font
@@ -16849,6 +16362,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 251.46 95.25 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c12d30de-4bb3-42be-9480-c1f9b1333bad")
+		(property "Reference" "#PWR041"
+			(at 251.46 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 251.46 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 251.46 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 251.46 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 251.46 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8d2687eb-9f71-491a-a0e7-3a1c482edf31")
+		)
+		(instances
+			(project "quacken"
+				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
+					(reference "#PWR041")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Keyboards:Switch")
 		(at 241.3 146.05 0)
 		(unit 1)
@@ -16873,7 +16452,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 146.05 0)
 			(effects
 				(font
@@ -17298,72 +16877,6 @@
 			(project "quacken"
 				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
 					(reference "SMDSW1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 100.33 69.85 0)
-		(mirror x)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "cb702932-8744-4699-af6f-bf86a1e9bfa7")
-		(property "Reference" "MS6"
-			(at 101.6 71.628 0)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.5 0.5)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 100.33 72.39 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 100.33 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 100.33 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 100.33 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "39f09fe4-3597-42d3-b75d-97baaaae8ba7")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS6")
 					(unit 1)
 				)
 			)
@@ -17925,7 +17438,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 241.3 140.97 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -17949,7 +17462,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 241.3 140.97 0)
 			(effects
 				(font
@@ -18172,7 +17685,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 123.19 0)
 			(effects
 				(font
@@ -18239,7 +17752,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 110.49 0)
 			(effects
 				(font
@@ -18416,72 +17929,6 @@
 			(project "quacken"
 				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
 					(reference "TRRS1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 200.66 148.59 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ded4ee3a-a0ed-4036-b582-997b60ea0e75")
-		(property "Reference" "MS9"
-			(at 199.39 146.812 0)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.5 0.5)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 200.66 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 200.66 148.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 200.66 148.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 200.66 148.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "0a9eaeb4-8e03-475f-b982-f5a49ec9177e")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS9")
 					(unit 1)
 				)
 			)
@@ -18709,9 +18156,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 105.41 69.85 0)
-		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -18727,14 +18173,14 @@
 			)
 		)
 		(property "Value" "~"
-			(at 105.41 72.39 0)
+			(at 105.41 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 105.41 69.85 0)
 			(effects
 				(font
@@ -18866,7 +18312,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 241.3 115.57 0)
 			(effects
 				(font
@@ -18909,9 +18355,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 105.41 107.95 0)
-		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -18927,14 +18372,14 @@
 			)
 		)
 		(property "Value" "~"
-			(at 105.41 110.49 0)
+			(at 105.41 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 105.41 107.95 0)
 			(effects
 				(font
@@ -18971,71 +18416,6 @@
 			(project "quacken"
 				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
 					(reference "SW2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Keyboards:MedianSwitch")
-		(at 236.22 140.97 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ef7cf0b8-39ab-4315-8e51-b5d6f6897cbc")
-		(property "Reference" "MS11"
-			(at 237.49 139.192 0)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.5 0.5)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 236.22 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "keyboard:MedianPosition"
-			(at 236.22 140.97 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 236.22 140.97 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 236.22 140.97 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6ce8a8b3-e41a-42e0-9a8d-fd396a2183ef")
-		)
-		(instances
-			(project "quacken"
-				(path "/8ecba305-878d-4653-b604-59a5af0c20a4"
-					(reference "MS11")
 					(unit 1)
 				)
 			)
@@ -19109,7 +18489,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Keyboards:Switch")
+		(lib_id "Keyboards:MedianSwitch")
 		(at 195.58 143.51 0)
 		(mirror y)
 		(unit 1)
@@ -19134,7 +18514,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch_Median"
 			(at 195.58 143.51 0)
 			(effects
 				(font
@@ -19268,7 +18648,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 87.63 0)
 			(effects
 				(font
@@ -19328,7 +18708,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "22k"
+		(property "Value" "4.7k"
 			(at 189.23 120.65 90)
 			(effects
 				(font
@@ -19546,7 +18926,7 @@
 				)
 			)
 		)
-		(property "Footprint" "keyboard:PG1350"
+		(property "Footprint" "keyboard:Choc_Switch"
 			(at 105.41 95.25 0)
 			(effects
 				(font
