@@ -21396,6 +21396,17 @@
 			(uuid "c31618b4-da40-48a0-8fb6-669e25a639dc")
 		)
 		(embedded_fonts no)
+		(model "../kicad_3dshapes/C2911838-0.5K-DX-12PWB.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0402_1005Metric"
 		(layer "F.Cu")
@@ -29588,6 +29599,17 @@
 			(uuid "e8ab31af-efdc-443e-bc88-c22b5d2c7986")
 		)
 		(embedded_fonts no)
+		(model "../kicad_3dshapes/C2911838-0.5K-DX-12PWB.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "keyboard:Choc_Switch"
 		(layer "F.Cu")
