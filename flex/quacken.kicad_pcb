@@ -695,6 +695,17 @@
 			(uuid "fd6228d0-4533-4ba3-b9de-4d0632594c5e")
 		)
 		(embedded_fonts no)
+		(model "../kicad_3dshapes/PJ-320A.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
@@ -15624,6 +15635,17 @@
 			(uuid "60641946-903f-48be-84af-dea47908986c")
 		)
 		(embedded_fonts no)
+		(model "../kicad_3dshapes/PJ-320A.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "keyboard:Choc_Switch"
 		(layer "F.Cu")
