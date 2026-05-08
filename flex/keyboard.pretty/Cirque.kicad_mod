@@ -244,4 +244,15 @@
 		(uuid "9dbc7d47-98c5-4d65-ae74-b264b3c3f93d")
 	)
 	(embedded_fonts no)
+	(model "../kicad_3dshapes/C2911838-0.5K-DX-12PWB.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )
