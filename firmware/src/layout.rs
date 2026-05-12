@@ -3,9 +3,9 @@ const LAYER_COUNT: usize = 6; // adjust to the number of layers defined below
 pub const COLS: usize = 12;
 pub const ROWS: usize = 4;
 
-use keyberon::layout;
-use keyberon::action::{m, Action};
+use keyberon::action::{Action, m};
 use keyberon::key_code::KeyCode;
+use keyberon::layout;
 
 pub type QuackenLayout = layout::Layout<COLS, ROWS, LAYER_COUNT, ()>;
 
@@ -13,12 +13,12 @@ pub type QuackenLayout = layout::Layout<COLS, ROWS, LAYER_COUNT, ()>;
 // const CLOSE: Action<()> = m(&[KeyCode::LCtrl, KeyCode::T].as_slice());
 // const COPY:  Action<()> = m(&[KeyCode::LCtrl, KeyCode::W].as_slice());
 const CMD: KeyCode = KeyCode::LCtrl; // LGui for macOS
-const UNDO:  Action<()> = m(&[CMD, KeyCode::Z].as_slice());
-const CUT:   Action<()> = m(&[CMD, KeyCode::X].as_slice());
-const COPY:  Action<()> = m(&[CMD, KeyCode::C].as_slice());
+const UNDO: Action<()> = m(&[CMD, KeyCode::Z].as_slice());
+const CUT: Action<()> = m(&[CMD, KeyCode::X].as_slice());
+const COPY: Action<()> = m(&[CMD, KeyCode::C].as_slice());
 const PASTE: Action<()> = m(&[CMD, KeyCode::V].as_slice());
-const ALL:   Action<()> = m(&[CMD, KeyCode::A].as_slice());
-const SAVE:  Action<()> = m(&[CMD, KeyCode::S].as_slice());
+const ALL: Action<()> = m(&[CMD, KeyCode::A].as_slice());
+const SAVE: Action<()> = m(&[CMD, KeyCode::S].as_slice());
 const CLOSE: Action<()> = m(&[CMD, KeyCode::W].as_slice());
 
 // other shortcuts

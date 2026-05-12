@@ -2,7 +2,7 @@
 #![no_main]
 
 mod layout; // 3*6 key layout
-mod zero;   // QuackenZero-specific matrix scanning
+mod zero; // QuackenZero-specific matrix scanning
 
 // set the panic handler
 use panic_halt as _;
@@ -25,29 +25,24 @@ mod app {
     use cortex_m::delay::Delay;
 
     use rp2040_hal::{
-        self,
-        Clock,
+        self, Clock,
         clocks::init_clocks_and_plls,
         fugit::MicrosDurationU32,
-        pac::CorePeripherals,
         gpio::Pins,
+        pac::CorePeripherals,
         sio::Sio,
-        timer::{ Alarm, Alarm0, Timer },
+        timer::{Alarm, Alarm0, Timer},
         usb::UsbBus,
         watchdog::Watchdog,
     };
 
-    use keyberon::{
-        debounce::Debouncer,
-        key_code::KbHidReport,
-        layout::Layout,
-    };
+    use keyberon::{debounce::Debouncer, key_code::KbHidReport, layout::Layout};
 
     use usb_device::{
-        prelude::UsbDeviceState,
-        class_prelude::UsbBusAllocator,
         // HACK: import the UsbClass trait, but still allow to use its name for a type later
         class::UsbClass as _,
+        class_prelude::UsbBusAllocator,
+        prelude::UsbDeviceState,
     };
 
     type UsbClass = keyberon::Class<'static, UsbBus, ()>;
@@ -67,8 +62,8 @@ mod app {
 
     // Fun fact: the keyboard is invisible to `lsusb`
     // if the scan time is set to 10_000 us or above.
-    const SCAN_TIME_US:          u32 = 1_000;
-    const WATCHDOG_TIME_US:      u32 = 10_000;
+    const SCAN_TIME_US: u32 = 1_000;
+    const WATCHDOG_TIME_US: u32 = 10_000;
     const EXTERNAL_XTAL_FREQ_HZ: u32 = 12_000_000;
 
     #[shared]
@@ -141,7 +136,10 @@ mod app {
 
         watchdog.start(MicrosDurationU32::micros(WATCHDOG_TIME_US));
 
-        let Ok(matrix) = QuackenZeroMatrix::new_sparkfun_rp2040(pins);
+        #[allow(unused_mut)]
+        let Ok(mut matrix) = QuackenZeroMatrix::new_sparkfun_rp2040(pins);
+        //// Uncomment if you soldered your microcontroller face down:
+        // matrix.upside_down();
 
         (
             Shared {
@@ -156,7 +154,7 @@ mod app {
                 debouncer: Debouncer::new(
                     [[false; kb_layout::COLS]; kb_layout::ROWS],
                     [[false; kb_layout::COLS]; kb_layout::ROWS],
-                    5
+                    5,
                 ),
                 delay,
                 timer,
@@ -197,8 +195,12 @@ mod app {
 
         c.shared.watchdog.feed();
 
-        let delay_1us = || { c.local.delay.delay_us(1) };
-        for event in c.local.debouncer.events(c.local.matrix.get_with_delay(delay_1us).get()) {
+        let delay_1us = || c.local.delay.delay_us(1);
+        for event in c
+            .local
+            .debouncer
+            .events(c.local.matrix.get_with_delay(delay_1us).get())
+        {
             c.local.layout.event(event);
         }
 
