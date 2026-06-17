@@ -20,11 +20,9 @@ Besides, the ProMicro GPIO pinout used by Ergogen and ZMK rely on the ProMicro A
     . 8 |           | 16          8 |           | 23          8 |           | 19
     . 9 |___________| 10          9 |___________| 21          9 |___________| 10
 **/
-
 // The logical layout is a 12×4 matrix: 3×6 + 3 thumb keys for each hand.
 // Ergogen has generated an 8*6 matrix rather than a 12×4 one, in order to save two pins:
 // the two halves are stacked onto one anather. So here’s q quick helper to work around that.
-
 use crate::layout;
 const MATRIX_COLS: usize = 6;
 const MATRIX_ROWS: usize = 8;
@@ -43,9 +41,9 @@ fn matrix_to_layout(row: usize, col: usize) -> (usize, usize) {
 // So here's a `Col2RowMatrix` type to implement this.
 
 // rp2040 implementations of the embedded_hal::digital::InputPin,OutputPin} traits
-use rp2040_hal::gpio;
 use embedded_hal::digital::{InputPin, OutputPin};
-type KbInputPin  = gpio::Pin<gpio::DynPinId, gpio::FunctionSioInput,  gpio::PullDown>;
+use rp2040_hal::gpio;
+type KbInputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioInput, gpio::PullDown>;
 type KbOutputPin = gpio::Pin<gpio::DynPinId, gpio::FunctionSioOutput, gpio::PullDown>;
 
 pub type QuackenZeroMatrix = Col2RowMatrix<KbOutputPin, KbInputPin>;
@@ -92,7 +90,7 @@ where
         Ok(())
     }
 
-    /// Creates a new Generic FroMicro matrix.
+    /// Creates a new Generic ProMicro matrix.
     pub fn new_promicro(pins: gpio::Pins) -> Result<QuackenZeroMatrix, Infallible> {
         QuackenZeroMatrix::new(
             [
@@ -132,12 +130,21 @@ where
                 pins.gpio4.into_pull_down_input().into_dyn_pin(),
                 pins.gpio5.into_pull_down_input().into_dyn_pin(),
                 pins.gpio9.into_pull_down_input().into_dyn_pin(),
-                pins.gpio28.into_pull_down_input().into_dyn_pin(),  // promicro 20
-                pins.gpio27.into_pull_down_input().into_dyn_pin(),  // promicro 19
-                pins.gpio26.into_pull_down_input().into_dyn_pin(),  // promicro 18
-                pins.gpio21.into_pull_down_input().into_dyn_pin(),  // promicro 10
+                pins.gpio28.into_pull_down_input().into_dyn_pin(), // promicro 20
+                pins.gpio27.into_pull_down_input().into_dyn_pin(), // promicro 19
+                pins.gpio26.into_pull_down_input().into_dyn_pin(), // promicro 18
+                pins.gpio21.into_pull_down_input().into_dyn_pin(), // promicro 10
             ],
         )
+    }
+
+    // To use after creating the QuackenZeroMatrix if the microcontroller was soldered face down.
+    // Cols and rows order is modified like this:
+    // [c0, c1, c2, c3, c4, c5]           --> [c3, c4, c5, c0, c1, c2]
+    // [r0, r1, r2, r3, r4, r5, r6, r7]   --> [r4, r5, r6, r7, r0, r1, r2, r3]
+    pub fn upside_down(&mut self) {
+        self.cols.rotate_left(MATRIX_COLS / 2);
+        self.rows.rotate_left(MATRIX_ROWS / 2);
     }
 
     /// Scans the matrix and checks which keys are pressed.
@@ -146,8 +153,10 @@ where
     /// if it's high, the key is marked as pressed.
     ///
     /// Delay function allows pause to let input pins settle.
-    pub fn get_with_delay<F: FnMut(), E>(&mut self, mut delay: F)
-        -> Result<[[bool; layout::COLS]; layout::ROWS], E>
+    pub fn get_with_delay<F: FnMut(), E>(
+        &mut self,
+        mut delay: F,
+    ) -> Result<[[bool; layout::COLS]; layout::ROWS], E>
     where
         C: OutputPin<Error = E>,
         R: InputPin<Error = E>,

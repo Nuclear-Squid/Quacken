@@ -18,6 +18,9 @@ patched version with:
 cargo install --git https://github.com/StripedMonkey/elf2uf2-rs.git#c1638b9
 ```
 
+Note: if you soldered your microcontroller face down, uncomment the
+`matrix.upside_down();` line in `main.rs`.
+
 ## ZMK
 
 [There is a ZMK Configuration on a dedicated repo][2].
