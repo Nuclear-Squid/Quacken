@@ -22,3 +22,9 @@ Libre, ergonomic, *polymorphic*: a single PCB for many possible layouts.
   - [x] optional rotary encoders
 
 - [ ] **Marie-Quackenette**: split and wireless variant of the Quacken Flex.
+
+## To flash the Quacken
+
+You just need to push the little switch near the MCU, with the lightning sign, while you plug the USB cable in. Your Quacken will be detected as a storage device.
+You may copy your beloved config file on this device through your file manager.
+The Quacken will read the new file and reboot in normal mode, with your new config applied.
